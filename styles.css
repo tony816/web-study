@@ -1,0 +1,56 @@
+/* styles.css */
+
+/* 기본 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* 헤더 스타일 */
+header {
+    padding: 0 20px; /* 좌우 패딩 */
+    position: fixed; /* 헤더를 고정 */
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* 헤더가 다른 요소 위에 표시되도록 설정 */
+    box-sizing: border-box;
+    height: 60px; /* 헤더의 높이 */
+    display: flex; /* 플렉스 박스 사용 */
+    align-items: center; /* 수직 가운데 정렬 */
+    justify-content: space-between; /* 좌우로 정렬 */
+    color: black; /* 헤더 내 텍스트 색상 변경 */
+}
+
+/* 로고 이미지 스타일 */
+.logo {
+    height: 40px; /* 이미지 높이 조절 */
+}
+
+/* 네비게이션 스타일 */
+nav {
+    display: flex; /* 플렉스 박스로 설정하여 링크 정렬 */
+}
+
+nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: black; /* 네비게이션 링크 색상 변경 */
+}
+
+/* 메인 콘텐츠 스타일 */
+main {
+    padding: 20px;
+    margin-top: 60px; /* 헤더의 높이만큼 여백 추가 */
+    display: flex; /* 플렉스 박스 사용 */
+    flex-direction: column; /* 세로 정렬 */
+    align-items: center; /* 수평 중앙 정렬 */
+}
+
+/* 이미지 스타일 (det1, det2, det3 ...) */
+[class^="det"] {
+    width: 860px; /* 이미지 너비 설정 */
+    max-width: 100%; /* 화면보다 더 커지지 않도록 */
+    height: auto; /* 비율을 유지하며 높이 자동 조절 */
+    margin-top: 20px; /* 상단에 약간의 여백 추가 */
+}
