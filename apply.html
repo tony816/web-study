@@ -45,20 +45,27 @@
         <!-- 생년월일 (연도, 월, 일 모두 JS로 동적 생성) -->
         <div class="mb-3">
           <label class="form-label">생년월일</label>
-          <div>
-            <select id="year" class="form-select" aria-label="Year">
+          <div class="d-flex">
+            <select id="year" class="form-select me-2" aria-label="Year">
               <option selected>년</option>
             </select>
-
-            <select id="month" class="form-select" aria-label="Month">
+        
+            <select id="month" class="form-select me-2" aria-label="Month">
               <option selected>월</option>
             </select>
-
+        
             <select id="day" class="form-select" aria-label="Day">
               <option selected>일</option>
             </select>
           </div>
         </div>
+        
+          <!-- 휴대폰 번호 (자동 하이픈 추가, maxlength 제거) -->
+          <div class="mb-3">
+            <label for="phone" class="form-label">휴대폰 번호</label>
+            <input type="text" class="form-control" id="phone" placeholder="010-1234-5678">
+          </div>
+  
 
         <!-- 이메일 -->
         <div class="mb-3">
@@ -74,15 +81,9 @@
           </div>
         </div>
 
-        <!-- 휴대폰 번호 (자동 하이픈 추가, maxlength 제거) -->
-        <div class="mb-3">
-          <label for="phone" class="form-label">휴대폰 번호</label>
-          <input type="text" class="form-control" id="phone" placeholder="010-1234-5678">
-        </div>
-
         <!-- 구독 기간 (하나만 선택 가능하도록 radio로 변경) -->
         <div class="mb-3">
-          <label class="form-label">구독 기간(일)</label>
+          <label class="mb-3">구독 기간(일)</label>
           <div>
             <input type="radio" id="sub30" name="subscription" value="30">
             <label for="sub30">30일</label>
@@ -93,8 +94,6 @@
           </div>
         </div>
 
-        <!-- 제출 버튼 -->
-        <button type="submit" class="btn btn-primary">가입 신청하기</button>
       </form>
     </main>
 
@@ -115,3 +114,5 @@
     <script src="formScript.js"></script>
 </body>
 </html>
+
+
