@@ -14,26 +14,26 @@
         <img src="https://assets.softr-files.com/applications/75e4b20f-ee28-434c-a4bf-e731765f8ac9/assets/d7c11249-cdde-48e6-b3ef-9dad52d500aa.png" alt="티어딜릿 로고" class="logo">
         <div class="header-right">
             <nav>
-                <a href="#">홈</a>
+                <a href="tede.html">홈</a>
                 <a href="#">소개</a>
                 <a href="#">고객센터</a>
             </nav>
-            <a href="#" class="btn btn-primary">가입 신청하기</a>
+            <a href="apply.html" class="btn btn-primary">가입 신청하기</a>
         </div>
     </header>
 
     <!-- 폼 섹션 -->
     <main>
       <form>
+       <div class="box-1 mb-4 p-3">
         <!-- 성함 -->
         <div class="mb-3">
-          <label for="name" class="form-label">성함</label>
-          <input type="text" class="form-control" id="name" placeholder="이름을 입력해주세요">
+          <input type="text" class="form-control" id="name" placeholder="이름">
         </div>
-
-        <!-- 성별 (radio로 변경하여 하나만 선택 가능) -->
+    
+        <!-- 성별 -->
+      <div class="radio-group-1">
         <div class="mb-3">
-          <label class="form-label">성별</label>
           <div>
             <input type="radio" id="female" name="gender" value="여성">
             <label for="female">여성</label>
@@ -41,13 +41,13 @@
             <label for="male">남성</label>
           </div>
         </div>
-
-        <!-- 생년월일 (연도, 월, 일 모두 JS로 동적 생성) -->
+      </div>
+    
+        <!-- 생년월일 -->
         <div class="mb-3">
-          <label class="form-label">생년월일</label>
           <div class="d-flex">
             <select id="year" class="form-select me-2" aria-label="Year">
-              <option selected>년</option>
+              <option selected>생년</option>
             </select>
         
             <select id="month" class="form-select me-2" aria-label="Month">
@@ -59,19 +59,32 @@
             </select>
           </div>
         </div>
-        
-          <!-- 휴대폰 번호 (자동 하이픈 추가, maxlength 제거) -->
-          <div class="mb-3">
-            <label for="phone" class="form-label">휴대폰 번호</label>
-            <input type="text" class="form-control" id="phone" placeholder="010-1234-5678">
-          </div>
-  
+      </div>
+      
+      <div class="box-2 p-3">
+        <!-- 휴대폰 번호 -->
+        <div class="mb-3">
+          <input type="text" class="form-control" id="phone" placeholder="휴대폰 번호">
+        </div>
 
+
+      <!-- 비밀번호 -->
+      <div class="mb-3">
+        <div class="d-flex">
+          <input type="password" class="form-control me-2" id="password" placeholder="비밀번호">
+          <input type="password" class="form-control" id="confirm-password" placeholder="비밀번호 확인">
+        </div>
+        <!-- 비밀번호 힌트와 일치 여부 메시지 한 줄에 배치 -->
+        <div class="d-flex">
+          <span class="password-hint">영문+숫자+특수문자 포함</span>
+          <div id="password-message" style="color: red;"></div>
+        </div>
+      </div>  
+    
         <!-- 이메일 -->
         <div class="mb-3">
-          <label for="email" class="form-label">이메일</label>
           <div class="d-flex">
-            <input type="text" class="form-control" id="email" placeholder="이메일 입력">
+            <input type="text" class="form-control" id="email" placeholder="이메일">
             <span>@</span>
             <select id="email-provider" class="form-select">
               <option value="naver.com">naver.com</option>
@@ -80,11 +93,11 @@
             </select>
           </div>
         </div>
-
-        <!-- 구독 기간 (하나만 선택 가능하도록 radio로 변경) -->
-        <div class="mb-3">
-          <label class="mb-3">구독 기간(일)</label>
-          <div>
+    
+        <!-- 구독 기간 -->
+        <div class="mb-3-sub">
+          <label class="form-label">구독 기간(일)</label>
+          <div class="radio-group-2">
             <input type="radio" id="sub30" name="subscription" value="30">
             <label for="sub30">30일</label>
             <input type="radio" id="sub180" name="subscription" value="180">
@@ -93,7 +106,7 @@
             <label for="sub360">360일</label>
           </div>
         </div>
-
+      </div>
       </form>
     </main>
 
