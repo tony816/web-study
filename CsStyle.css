@@ -1,0 +1,113 @@
+/* 헤더 스타일 */
+header {
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-sizing: border-box;
+    height: 80px;             /* 높이를 80px로 설정 */
+    display: flex;
+    align-items: center;      /* 세로 중앙 정렬 */
+    justify-content: space-between;
+    background-color: #f0f0f0;
+}
+
+/* 로고 이미지 스타일 */
+.logo {
+    height: 50px; /* 로고 이미지 높이 */
+    margin-left: 30px;
+}
+
+/* nav 스타일: 링크들을 수평 정렬 */
+nav {
+    display: flex;
+    align-items: center;  /* nav 텍스트 수직 중앙 정렬 */
+    margin-right: 20px;   /* 버튼과의 간격 */
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+    margin: 0 20px;       /* 링크 사이 간격 */
+    font-size: 1.25em;    /* 헤더 버튼보다 살짝 작은 크기 */
+    position: relative; 
+}
+
+/* nav 링크들 사이에 하나의 경계선 추가 */
+nav a:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -20px;         /* 링크 오른쪽에 경계선 */
+    top: 50%;             /* 중앙 정렬 */
+    transform: translateY(-50%);  /* 수직 중앙 정렬 */
+    height: 60%;          /* 경계선 높이 설정 (텍스트 중심에 위치) */
+    width: 1px;
+    background-color: black;  /* 경계선 색상 */
+}
+
+
+/* 헤더와 결제 카드의 btn-primary 스타일을 동일하게 설정 */
+.btn-primary {  
+    background-color: #A3DC8B;  /* 배경색 */
+    border: 1px solid black;    /* 검정 테두리 */
+    color: black;               /* 텍스트 색상 */
+    border-radius: 50px;        /* 둥근 모서리 */
+    padding: 10px 20px;         /* 패딩: 버튼 크기 통일 */
+    font-size: 1.2em;           /* 폰트 크기 */
+    font-weight: bold;          /* 텍스트 굵기 */
+    transition: background-color 0.3s ease; /* 호버 효과 */
+    display: inline-block;
+    margin-top: -2px;           /* 버튼을 살짝 위로 이동하여 수평 정렬 */
+}
+
+/* 헤더의 btn-primary에만 오른쪽 마진 추가 */
+header .btn-primary {
+    margin-right: 30px;         /* 웹페이지 오른쪽에서 더 이격 */
+}
+
+/* 호버 시 버튼 색상 변경 */
+.btn-primary:hover {
+    background-color: #8cc679;  /* 호버 시 어두운 녹색 */
+}
+
+/* 헤더 우측을 감싸는 wrapper */
+.header-right {
+    display: flex;        /* nav와 버튼을 수평 정렬 */
+    align-items: center;  /* 세로 중앙 정렬 */
+}
+
+/* 이미지 및 버튼 스타일 */
+.cs-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 80vh; /* 화면의 대부분을 차지하도록 */
+}
+
+.cs-image {
+    width: 300px; /* 이미지 기본 크기 */
+    max-width: 100%; /* 화면보다 커지지 않도록 */
+    height: auto; /* 비율 유지 */
+    margin-bottom: 20px;
+}
+
+.cs-button {
+    background-color: #A3DC8B; /* 버튼 색상 */
+    color: black;
+    padding: 10px 20px;
+    border: 1px solid black;
+    border-radius: 50px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.cs-button:hover {
+    background-color: #8cc679; /* 호버 효과 */
+    transform: scale(1.05); /* 약간 확대 */
+}
