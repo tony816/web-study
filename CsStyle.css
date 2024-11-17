@@ -13,6 +13,11 @@ header {
     background-color: #f0f0f0;
 }
 
+header nav {
+    position: relative;
+    z-index: 1001; /* nav가 헤더 안에서도 최상위로 */
+}
+
 /* 로고 이미지 스타일 */
 .logo {
     height: 50px; /* 로고 이미지 높이 */
@@ -85,6 +90,8 @@ header .btn-primary {
     justify-content: center;
     text-align: center;
     height: 80vh; /* 화면의 대부분을 차지하도록 */
+    position: relative;
+    z-index: 500;
 }
 
 .cs-image {
@@ -98,6 +105,7 @@ header .btn-primary {
     background-color: #A3DC8B; /* 버튼 색상 */
     color: black;
     padding: 10px 20px;
+    margin-top: 10px;
     border: 1px solid black;
     border-radius: 50px;
     font-size: 1.2em;
@@ -105,9 +113,78 @@ header .btn-primary {
     text-decoration: none;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
+    position: relative;
+    z-index: 501;
 }
 
 .cs-button:hover {
     background-color: #8cc679; /* 호버 효과 */
     transform: scale(1.05); /* 약간 확대 */
+}
+
+
+/* 푸터 스타일 */
+footer {
+    background-color: #f0f0f0;
+    padding: 20px;
+    color: #666;
+    font-size: 0.9em;
+    width: 100%;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* 콘텐츠 사이에 여유 공간 */
+    text-align: left;
+}
+
+/* 각 span 요소에 구분선 추가 */
+.footer-content span {
+    display: flex;
+    align-items: center;  /* 콘텐츠 수직 중앙 정렬 */
+    padding-right: 10px;
+    margin-right: 10px;
+    position: relative;
+}
+
+/* 구분선을 콘텐츠 사이의 중앙에 배치 */
+.footer-content span:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: -7px;           /* 콘텐츠 사이 공간의 중앙에 맞추기 위해 -7px */
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    height: 13px;
+    background-color: #ccc;
+    transform: translateY(4px);
+}
+
+/* 사업자등록번호와 통신판매업신고 사이 구분선 제거 */
+.footer-content span:nth-child(3)::after {
+    display: none;
+}
+
+/* 줄바꿈 처리 */
+.line-break {
+    flex-basis: 100%;  /* 줄바꿈 */
+    margin-top: -400px;
+    margin-bottom: -400px;
+}
+
+
+/* 마지막 항목 구분선 제거 */
+.footer-content span:last-child {
+    border-right: none;
+}
+
+
+footer a {
+    color: inherit;       /* 링크 색상 상속 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
+footer a:hover {
+    text-decoration: none; /* 호버 시에도 밑줄 없음 */
 }
