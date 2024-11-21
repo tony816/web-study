@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header>
+        <a href="tede.html">
+            <img src="https://assets.softr-files.com/applications/75e4b20f-ee28-434c-a4bf-e731765f8ac9/assets/d7c11249-cdde-48e6-b3ef-9dad52d500aa.png" alt="티어딜릿 로고" class="logo">
+        </a>
+        <div class="header-right">
+            <nav>
+                <a href="tede.html">홈</a>
+                <a href="about.html">소개</a>
+                <a href="cs.html">고객센터</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-login">로그인</a>
+                <a href="apply.html" class="btn btn-primary">가입 신청하기</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 로그인 폼 -->
+    <main>
+        <form>
+            <div class="box-1 p-3">
+                <!-- 이메일 -->
+                <div class="d-flex-align-items-center mb-3">
+                    <input type="text" class="form-control" id="email" placeholder="이메일">
+                    <span class="email-at">@</span>
+                    <select id="email-provider" class="form-select">
+                        <option value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="hanmail.net">hanmail.net</option>
+                    </select>
+                </div>
+                
+                <!-- 비밀번호 -->
+                <div class="mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="비밀번호(영문+숫자+특수문자)">
+                </div>
+            </div>
+            
+            <!-- 로그인 버튼 -->
+            <div class="text-center">
+                <button type="submit" class="btn-complete">로그인</button>
+            </div>
+        </form>
+    </main>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="footer-content">
+            <span>&copy; 2023-2024 teardelete. All rights reserved.</span>
+            <span>사업자명: 송민수</span>
+            <span>사업자등록번호: 433-38-01328</span>
+            <div class="line-break"></div>
+            <span>통신판매업신고: 2024-서울성동-0625</span>
+            <span>연락처: 010-2994-9130</span>
+            <span>이메일: <a href="mailto:tede816@naver.com">tede816@naver.com</a></span>
+        </div>
+    </footer>
+</body>
+</html>

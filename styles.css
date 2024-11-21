@@ -56,7 +56,7 @@ nav a:not(:last-child)::after {
 }
 
 
-/* 로그인, 회원가입 버튼 스타일 */
+/* 로그인 버튼 스타일 */
 .auth-buttons {
     display: flex;
     align-items: center;

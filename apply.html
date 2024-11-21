@@ -67,10 +67,16 @@
       </div>
       
       <div class="box-2 p-3">
-        <!-- 휴대폰 번호 -->
-        <div class="mb-3">
-          <input type="text" class="form-control" id="phone" placeholder="휴대폰 번호">
-        </div>
+        <!-- 이메일 -->
+        <div class="d-flex-align-items-center"> <!-- flex 컨테이너에 align-items-center 추가 -->
+          <input type="text" class="form-control" id="email" placeholder="이메일">
+          <span class="email-at">@</span>
+          <select id="email-provider" class="form-select">
+              <option value="naver.com">naver.com</option>
+              <option value="gmail.com">gmail.com</option>
+              <option value="hanmail.net">hanmail.net</option>
+          </select>
+      </div>
 
 
       <!-- 비밀번호 -->
@@ -86,16 +92,11 @@
         </div>
       </div>  
     
-        <!-- 이메일 -->
-        <div class="d-flex-align-items-center"> <!-- flex 컨테이너에 align-items-center 추가 -->
-          <input type="text" class="form-control" id="email" placeholder="이메일">
-          <span class="email-at">@</span>
-          <select id="email-provider" class="form-select">
-              <option value="naver.com">naver.com</option>
-              <option value="gmail.com">gmail.com</option>
-              <option value="hanmail.net">hanmail.net</option>
-          </select>
-      </div>
+        <!-- 휴대폰 번호 -->
+        <div class="mb-3">
+          <input type="text" class="form-control" id="phone" placeholder="휴대폰 번호">
+        </div>
+
       
     
         <!-- 구독 기간 -->
