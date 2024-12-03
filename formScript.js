@@ -119,6 +119,15 @@ window.onload = function () {
       return;
     }
 
+    // birthdate 조합
+    const year = document.getElementById("year").value;
+    const month = document.getElementById("month").value.padStart(2, "0"); // 두 자리 숫자
+    const day = document.getElementById("day").value.padStart(2, "0"); // 두 자리 숫자
+    const birthdate = `${year}-${month}-${day}`;
+
+    // hidden input에 설정
+    document.getElementById("birthdate").value = birthdate;
+
     // 알림창 표시 (한 번만 표시)
     if (!isValid) {
       alert("필드를 확인해 주세요."); // 한 번만 오류 메시지 표시
@@ -149,16 +158,21 @@ window.onload = function () {
 
       const formData = {
         name: document.getElementById("name").value.trim(),
-        gender: document.querySelector('input[name="gender"]:checked')?.value || "",
-        birthdate: `${document.getElementById("birthdate_year").value}-${document.getElementById("birthdate_month").value}-${document.getElementById("birthdate_day").value}`,
-        email: `${document.getElementById("email").value}@${document.getElementById("email-provider").value}`,
+        gender:
+          document.querySelector('input[name="gender"]:checked')?.value || "",
+        birthdate: birthdate, // 조합된 birthdate 사용
+        email: `${document.getElementById("email").value}@${
+          document.getElementById("email-provider").value
+        }`,
         password: document.getElementById("password").value.trim(),
         phone: document.getElementById("phone").value.trim(),
-        subscription_period: document.querySelector('input[name="subscription_period"]:checked')?.value || "",
+        subscription_period:
+          document.querySelector('input[name="subscription_period"]:checked')
+            ?.value || "",
       };
-      
+
       let isValid = true;
-      
+
       // 각 필드를 검증합니다.
       Object.entries(formData).forEach(([key, value]) => {
         if (!value || value.trim() === "") {
@@ -166,12 +180,12 @@ window.onload = function () {
           console.error(`필드 ${key}가 비어있습니다.`);
         }
       });
-      
+
       if (!isValid) {
         alert("모든 필드를 정확히 입력해주세요.");
         return;
       }
-      
+
       console.log("폼 데이터:", formData);
 
       fetch("http://localhost:3001/register", {
@@ -179,8 +193,8 @@ window.onload = function () {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       })
-      .then((response) => response.json())
-      .then((data) => console.log("서버 응답:", data))
-      .catch((error) => console.error("전송 오류:", error));
+        .then((response) => response.json())
+        .then((data) => console.log("서버 응답:", data))
+        .catch((error) => console.error("전송 오류:", error));
     });
 };
