@@ -6,8 +6,10 @@ const path = require("path");
 
 const app = express();
 
-app.use(bodyParser.json());
 app.use(cors());
+app.use(express.json()); // JSON 데이터를 처리
+app.use(bodyParser.urlencoded({ extended: true })); // URL-encoded 데이터 처리
+app.use(bodyParser.json()); // JSON 데이터 처리
 
 // 정적 파일 제공
 app.use(express.static(path.join(__dirname, "/")));
@@ -43,6 +45,12 @@ app.post("/register", (req, res) => {
     phone,
     subscription_period,
   } = req.body;
+
+  if (!name || !gender || !birthdate || !email || !password || !phone || !subscription_period) {
+    console.error("필수 데이터가 누락되었습니다.", req.body);
+    return res.status(400).send("필수 필드가 누락되었습니다.");
+  }
+
   const query = `
       INSERT INTO users (name, gender, birthdate, email, password, phone, subscription_period)
       VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -52,11 +60,10 @@ app.post("/register", (req, res) => {
     [name, gender, birthdate, email, password, phone, subscription_period],
     (err, result) => {
       if (err) {
-        console.error(err);
-        res.status(500).send("사용자 등록에 실패했습니다.");
-      } else {
-        res.send("사용자가 성공적으로 등록되었습니다.");
+        console.error("MySQL 오류:", err);
+        return res.status(500).send("사용자 등록에 실패했습니다.");
       }
+      res.send("사용자가 성공적으로 등록되었습니다.");
     }
   );
 });

@@ -95,7 +95,7 @@ window.onload = function () {
 
     // 구독일 라디오 버튼 그룹 검증
     const subscriptionRadioGroup = document.querySelectorAll(
-      'input[name="subscription"]'
+      'input[name="subscription_period"]'
     );
     const subscriptionSelected = Array.from(subscriptionRadioGroup).some(
       (radio) => radio.checked
@@ -148,21 +148,30 @@ window.onload = function () {
       event.preventDefault();
 
       const formData = {
-        name: document.getElementById("name").value,
-        gender: document.querySelector('input[name="gender"]:checked').value,
-        birthdate: `${document.getElementById("year").value}-${
-          document.getElementById("month").value
-        }-${document.getElementById("day").value}`,
-        email: `${document.getElementById("email").value}@${
-          document.getElementById("email-provider").value
-        }`,
-        password: document.getElementById("password").value,
-        phone: document.getElementById("phone").value,
-        subscription_period: document.querySelector(
-          'input[name="subscription"]:checked'
-        ).value,
+        name: document.getElementById("name").value.trim(),
+        gender: document.querySelector('input[name="gender"]:checked')?.value || "",
+        birthdate: `${document.getElementById("birthdate_year").value}-${document.getElementById("birthdate_month").value}-${document.getElementById("birthdate_day").value}`,
+        email: `${document.getElementById("email").value}@${document.getElementById("email-provider").value}`,
+        password: document.getElementById("password").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        subscription_period: document.querySelector('input[name="subscription_period"]:checked')?.value || "",
       };
-
+      
+      let isValid = true;
+      
+      // 각 필드를 검증합니다.
+      Object.entries(formData).forEach(([key, value]) => {
+        if (!value || value.trim() === "") {
+          isValid = false;
+          console.error(`필드 ${key}가 비어있습니다.`);
+        }
+      });
+      
+      if (!isValid) {
+        alert("모든 필드를 정확히 입력해주세요.");
+        return;
+      }
+      
       console.log("폼 데이터:", formData);
 
       fetch("http://localhost:3001/register", {
@@ -170,14 +179,8 @@ window.onload = function () {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       })
-        .then((response) => {
-          console.log("서버 응답 상태:", response.status); // 응답 상태 코드
-          return response.text();
-        })
-        .then((data) => {
-          console.log("서버 응답 데이터:", data); // 서버에서 반환된 메시지
-          alert(data);
-        })
-        .catch((error) => console.error("Fetch 오류:", error));
+      .then((response) => response.json())
+      .then((data) => console.log("서버 응답:", data))
+      .catch((error) => console.error("전송 오류:", error));
     });
 };

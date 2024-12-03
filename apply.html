@@ -50,7 +50,9 @@
               type="text"
               class="form-control"
               id="name"
+              name="name"
               placeholder="이름"
+              required
             />
           </div>
 
@@ -58,9 +60,9 @@
           <div class="radio-group-1">
             <div class="mb-3">
               <div>
-                <input type="radio" id="female" name="gender" value="여성" />
+                <input type="radio" id="female" name="gender" value="여성"/>
                 <label for="female">여성</label>
-                <input type="radio" id="male" name="gender" value="남성" />
+                <input type="radio" id="male" name="gender" value="남성"/>
                 <label for="male">남성</label>
               </div>
             </div>
@@ -69,15 +71,15 @@
           <!-- 생년월일 -->
           <div class="mb-3">
             <div class="d-flex">
-              <select id="year" class="form-select me-2" aria-label="Year">
+              <select id="year" class="form-select me-2" aria-label="Year" name="birthdate_year" required>
                 <option selected>생년</option>
               </select>
 
-              <select id="month" class="form-select me-2" aria-label="Month">
+              <select id="month" class="form-select me-2" aria-label="Month" name="birthdate_month" required>
                 <option selected>월</option>
               </select>
 
-              <select id="day" class="form-select" aria-label="Day">
+              <select id="day" class="form-select" aria-label="Day" name="birthdate_day" required>
                 <option selected>일</option>
               </select>
             </div>
@@ -92,10 +94,12 @@
               type="text"
               class="form-control"
               id="email"
+              name="email"
               placeholder="이메일"
+              required
             />
             <span class="email-at">@</span>
-            <select id="email-provider" class="form-select">
+            <select id="email-provider" class="form-select" name="email_provider">
               <option value="naver.com">naver.com</option>
               <option value="gmail.com">gmail.com</option>
               <option value="hanmail.net">hanmail.net</option>
@@ -109,13 +113,17 @@
                 type="password"
                 class="form-control me-2"
                 id="password"
+                name="password"
                 placeholder="비밀번호"
+                required
               />
               <input
                 type="password"
                 class="form-control"
                 id="confirm-password"
+                name="confirm_password"
                 placeholder="비밀번호 확인"
+                required
               />
             </div>
             <!-- 비밀번호 힌트와 일치 여부 메시지 한 줄에 배치 -->
@@ -131,7 +139,9 @@
               type="text"
               class="form-control"
               id="phone"
+              name="phone"
               placeholder="휴대폰 번호"
+              required
             />
           </div>
 
@@ -139,11 +149,11 @@
           <div class="mb-3-sub">
             <label class="form-label">구독 기간(일)</label>
             <div class="radio-group-2">
-              <input type="radio" id="sub30" name="subscription" value="30" />
+              <input type="radio" id="sub30" name="subscription_period" value="30" />
               <label for="sub30">30일</label>
-              <input type="radio" id="sub180" name="subscription" value="180" />
+              <input type="radio" id="sub180" name="subscription_period" value="180" />
               <label for="sub180">180일</label>
-              <input type="radio" id="sub360" name="subscription" value="360" />
+              <input type="radio" id="sub360" name="subscription_period" value="360" />
               <label for="sub360">360일</label>
             </div>
           </div>
