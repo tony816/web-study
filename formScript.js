@@ -10,6 +10,8 @@ window.onload = function () {
   const btnComplete = document.querySelector(".btn-complete");
   const passwordMessage = document.getElementById("password-message");
 
+  let isRequestSent = false; // 요청 상태를 추적하는 플래그 변수
+
   // 연도 추가 (2023 ~ 1900)
   for (let i = 2023; i >= 1900; i--) {
     const option = document.createElement("option");
@@ -65,6 +67,12 @@ window.onload = function () {
   // 버튼 클릭 시 입력 검증
   btnComplete.addEventListener("click", function (event) {
     event.preventDefault(); // 기본 폼 제출 방지
+
+    if (isRequestSent) {
+      alert("요청이 이미 처리 중입니다.");
+      return; // 요청 중복 방지
+    }
+
     let isValid = true;
 
     // 모든 입력 필드가 채워졌는지 확인
@@ -150,6 +158,7 @@ window.onload = function () {
       });
     });
   });
+
   // 서버로 데이터 전송
   document
     .querySelector(".btn-complete")
@@ -188,13 +197,26 @@ window.onload = function () {
 
       console.log("폼 데이터:", formData);
 
+      isRequestSent = true; // 요청 상태 설정
+
       fetch("http://localhost:3001/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       })
-        .then((response) => response.json())
-        .then((data) => console.log("서버 응답:", data))
-        .catch((error) => console.error("전송 오류:", error));
+        .then((response) => {
+          isRequestSent = false; // 요청 완료 후 플래그 초기화
+          return response.text();
+        })
+        .then((data) => {
+          console.log("서버 응답:", data);
+          alert(data); // 서버로부터 받은 메시지를 사용자에게 표시
+          // 필요하다면 여기에서 페이지 이동이나 추가 처리를 합니다.
+        })
+        .catch((error) => {
+          isRequestSent = false; // 에러 발생 시 플래그 초기화
+          console.error("전송 오류:", error);
+          alert("요청 중 오류가 발생했습니다. 다시 시도해주세요.");
+        });
     });
 };

@@ -36,36 +36,139 @@ db.connect((err) => {
 
 app.post("/register", (req, res) => {
   console.log("서버로 POST 요청 도착:", req.body); // 디버깅용
+
   const {
     name,
     gender,
-    birthdate,
+    birthdate_year,
+    birthdate_month,
+    birthdate_day,
     email,
+    email_provider,
     password,
     phone,
     subscription_period,
   } = req.body;
 
-  if (!name || !gender || !birthdate || !email || !password || !phone || !subscription_period) {
+  if (
+    !name ||
+    !gender ||
+    !birthdate_year ||
+    !birthdate_month ||
+    !birthdate_day ||
+    !email ||
+    !email_provider ||
+    !password ||
+    !phone ||
+    !subscription_period
+  ) {
     console.error("필수 데이터가 누락되었습니다.", req.body);
     return res.status(400).send("필수 필드가 누락되었습니다.");
   }
 
-  const query = `
-      INSERT INTO users (name, gender, birthdate, email, password, phone, subscription_period)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
-  db.query(
-    query,
-    [name, gender, birthdate, email, password, phone, subscription_period],
-    (err, result) => {
+  // 이메일 결합
+  const fullEmail = `${email}@${email_provider}`;
+
+  // 생년월일 결합
+  const birthdate = `${birthdate_year}-${birthdate_month}-${birthdate_day}`;
+
+  // 나이 계산
+  const today = new Date();
+  const birthDate = new Date(birthdate);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  const schedule = require("node-schedule");
+
+  // 매일 자정에 나이 업데이트
+  schedule.scheduleJob("0 0 * * *", () => {
+    const updateAgeQuery = `
+      UPDATE users
+      SET age = YEAR(CURDATE()) - YEAR(birthdate) - 
+                (DATE_FORMAT(CURDATE(), '%m-%d') < DATE_FORMAT(birthdate, '%m-%d'));
+    `;
+
+    db.query(updateAgeQuery, (err, results) => {
       if (err) {
-        console.error("MySQL 오류:", err);
-        return res.status(500).send("사용자 등록에 실패했습니다.");
+        console.error("스케줄링 나이 업데이트 오류:", err);
+      } else {
+        console.log("모든 사용자의 나이가 업데이트되었습니다.");
       }
-      res.send("사용자가 성공적으로 등록되었습니다.");
+    });
+  });
+
+  const checkQuery = "SELECT email FROM users WHERE email = ?";
+  db.query(checkQuery, [fullEmail], (err, results) => {
+    if (err) {
+      console.error("MySQL 오류:", err);
+      return res.status(500).send("중복 확인 중 오류가 발생했습니다.");
     }
-  );
+
+    if (results.length > 0) {
+      console.log("중복된 이메일:", fullEmail);
+      return res.status(400).send("이미 등록된 이메일입니다.");
+    }
+
+    const insertQuery = `
+      INSERT INTO users (name, gender, birthdate, age, email, password, phone, subscription_period)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+    db.query(
+      insertQuery,
+      [
+        name,
+        gender,
+        birthdate,
+        age,
+        fullEmail,
+        password,
+        phone,
+        subscription_period,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("MySQL 오류:", err);
+          return res
+            .status(500)
+            .json({
+              success: false,
+              message: "사용자 등록에 실패했습니다.",
+              error: err.message,
+            });
+        }
+        res
+          .status(200)
+          .json({
+            success: true,
+            message: "사용자가 성공적으로 등록되었습니다.",
+          });
+      }
+    );
+  });
+});
+
+app.get("/update-ages", (req, res) => {
+  const updateAgeQuery = `
+    UPDATE users
+    SET age = YEAR(CURDATE()) - YEAR(birthdate) - 
+              (DATE_FORMAT(CURDATE(), '%m-%d') < DATE_FORMAT(birthdate, '%m-%d'));
+  `;
+
+  db.query(updateAgeQuery, (err, results) => {
+    if (err) {
+      console.error("나이 업데이트 오류:", err);
+      return res
+        .status(500)
+        .send("나이를 업데이트하는 중 오류가 발생했습니다.");
+    }
+    res.send("모든 사용자의 나이가 성공적으로 업데이트되었습니다.");
+  });
 });
 
 app.get("/users", (req, res) => {
