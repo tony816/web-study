@@ -40,11 +40,8 @@ app.post("/register", (req, res) => {
   const {
     name,
     gender,
-    birthdate_year,
-    birthdate_month,
-    birthdate_day,
+    birthdate,
     email,
-    email_provider,
     password,
     phone,
     subscription_period,
@@ -53,11 +50,8 @@ app.post("/register", (req, res) => {
   if (
     !name ||
     !gender ||
-    !birthdate_year ||
-    !birthdate_month ||
-    !birthdate_day ||
+    !birthdate ||
     !email ||
-    !email_provider ||
     !password ||
     !phone ||
     !subscription_period
@@ -66,11 +60,8 @@ app.post("/register", (req, res) => {
     return res.status(400).send("필수 필드가 누락되었습니다.");
   }
 
-  // 이메일 결합
-  const fullEmail = `${email}@${email_provider}`;
 
-  // 생년월일 결합
-  const birthdate = `${birthdate_year}-${birthdate_month}-${birthdate_day}`;
+
 
   // 나이 계산
   const today = new Date();
@@ -104,20 +95,20 @@ app.post("/register", (req, res) => {
   });
 
   const checkQuery = "SELECT email FROM users WHERE email = ?";
-  db.query(checkQuery, [fullEmail], (err, results) => {
+  db.query(checkQuery, [email], (err, results) => {
     if (err) {
       console.error("MySQL 오류:", err);
       return res.status(500).send("중복 확인 중 오류가 발생했습니다.");
     }
 
     if (results.length > 0) {
-      console.log("중복된 이메일:", fullEmail);
+      console.log("중복된 이메일:", email);
       return res.status(400).send("이미 등록된 이메일입니다.");
     }
 
     const insertQuery = `
       INSERT INTO users (name, gender, birthdate, age, email, password, phone, subscription_period)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     db.query(
       insertQuery,
@@ -126,7 +117,7 @@ app.post("/register", (req, res) => {
         gender,
         birthdate,
         age,
-        fullEmail,
+        email,
         password,
         phone,
         subscription_period,
@@ -148,6 +139,7 @@ app.post("/register", (req, res) => {
             success: true,
             message: "사용자가 성공적으로 등록되었습니다.",
           });
+          console.log("서버 응답 완료: 사용자 등록 성공");
       }
     );
   });

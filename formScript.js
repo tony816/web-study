@@ -127,14 +127,7 @@ window.onload = function () {
       return;
     }
 
-    // birthdate 조합
-    const year = document.getElementById("year").value;
-    const month = document.getElementById("month").value.padStart(2, "0"); // 두 자리 숫자
-    const day = document.getElementById("day").value.padStart(2, "0"); // 두 자리 숫자
-    const birthdate = `${year}-${month}-${day}`;
-
-    // hidden input에 설정
-    document.getElementById("birthdate").value = birthdate;
+ 
 
     // 알림창 표시 (한 번만 표시)
     if (!isValid) {
@@ -163,7 +156,18 @@ window.onload = function () {
   document
     .querySelector(".btn-complete")
     .addEventListener("click", function (event) {
-      event.preventDefault();
+      const btnComplete = document.querySelector(".btn-complete");
+
+  
+
+    // birthdate 조합
+    const year = document.getElementById("year").value;
+    const month = document.getElementById("month").value.padStart(2, "0"); // 두 자리 숫자
+    const day = document.getElementById("day").value.padStart(2, "0"); // 두 자리 숫자
+    const birthdate = `${year}-${month}-${day}`;
+
+    // hidden input에 설정
+    document.getElementById("birthdate").value = birthdate;
 
       const formData = {
         name: document.getElementById("name").value.trim(),
@@ -205,13 +209,19 @@ window.onload = function () {
         body: JSON.stringify(formData),
       })
         .then((response) => {
+          if (!response.ok) {
+            return response.text().then((text) => {
+              throw new Error(`서버 오류: ${text}`);
+            });}
           isRequestSent = false; // 요청 완료 후 플래그 초기화
-          return response.text();
+          return response.json();
         })
         .then((data) => {
-          console.log("서버 응답:", data);
-          alert(data); // 서버로부터 받은 메시지를 사용자에게 표시
-          // 필요하다면 여기에서 페이지 이동이나 추가 처리를 합니다.
+          if (data.success) {
+            alert(data.message); // "사용자가 성공적으로 등록되었습니다." 메시지 표시
+          } else {
+            alert("오류 발생: " + data.message);
+          }
         })
         .catch((error) => {
           isRequestSent = false; // 에러 발생 시 플래그 초기화
