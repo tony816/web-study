@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -13,6 +14,13 @@ app.use(bodyParser.json()); // JSON 데이터 처리
 
 // 정적 파일 제공
 app.use(express.static(path.join(__dirname, "/")));
+
+app.use(cors({
+  origin: "http://localhost:3000", // 클라이언트가 실행되는 주소와 포트
+  methods: ["GET", "POST"], // 허용할 HTTP 메서드
+  credentials: true, // 쿠키 허용 (필요 시)
+}));
+
 
 // 기본 라우팅
 app.get("/", (req, res) => {
@@ -34,7 +42,7 @@ db.connect((err) => {
   console.log("MySQL에 연결되었습니다.");
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   console.log("서버로 POST 요청 도착:", req.body); // 디버깅용
 
   const {
@@ -61,7 +69,14 @@ app.post("/register", (req, res) => {
   }
 
 
-
+ // 비밀번호 해시화 처리
+ let hashedPassword;
+ try {
+   hashedPassword = await bcrypt.hash(password, 10); // 비밀번호 해시화
+ } catch (err) {
+   console.error("비밀번호 해시화 오류:", err);
+   return res.status(500).send("비밀번호 처리 중 오류가 발생했습니다.");
+ }
 
   // 나이 계산
   const today = new Date();
@@ -118,7 +133,7 @@ app.post("/register", (req, res) => {
         birthdate,
         age,
         email,
-        password,
+        hashedPassword,
         phone,
         subscription_period,
       ],

@@ -10,6 +10,7 @@ window.onload = function () {
   const btnComplete = document.querySelector(".btn-complete");
   const passwordMessage = document.getElementById("password-message");
 
+
   let isRequestSent = false; // 요청 상태를 추적하는 플래그 변수
 
   // 연도 추가 (2023 ~ 1900)
@@ -203,9 +204,13 @@ window.onload = function () {
 
       isRequestSent = true; // 요청 상태 설정
 
+      console.log("폼 데이터:", formData); // 전송 직전 로그
+
+
       fetch("http://localhost:3001/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // 쿠키와 인증 정보를 포함
         body: JSON.stringify(formData),
       })
         .then((response) => {
@@ -217,12 +222,15 @@ window.onload = function () {
           return response.json();
         })
         .then((data) => {
+          isRequestSent = false;
           if (data.success) {
             alert(data.message); // "사용자가 성공적으로 등록되었습니다." 메시지 표시
           } else {
             alert("오류 발생: " + data.message);
           }
         })
+
+
         .catch((error) => {
           isRequestSent = false; // 에러 발생 시 플래그 초기화
           console.error("전송 오류:", error);
