@@ -220,7 +220,16 @@
       </div>
     </footer>
 
-    <!-- External JS file -->
-    <script src="formScript.js"></script>
+    <script type="module">
+      import { submitForm } from "./backend.js";
+
+      document
+        .querySelector(".btn-complete")
+        .addEventListener("click", (event) => {
+          event.preventDefault();
+          submitForm();
+        });
+    </script>
+    <script src="frontend.js"></script>
   </body>
 </html>

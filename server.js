@@ -15,12 +15,13 @@ app.use(bodyParser.json()); // JSON 데이터 처리
 // 정적 파일 제공
 app.use(express.static(path.join(__dirname, "/")));
 
-app.use(cors({
-  origin: "http://localhost:3000", // 클라이언트가 실행되는 주소와 포트
-  methods: ["GET", "POST"], // 허용할 HTTP 메서드
-  credentials: true, // 쿠키 허용 (필요 시)
-}));
-
+app.use(
+  cors({
+    origin: "http://localhost:3001", // 클라이언트가 실행되는 주소와 포트
+    methods: ["GET", "POST"], // 허용할 HTTP 메서드
+    credentials: true, // 쿠키 허용 (필요 시)
+  })
+);
 
 // 기본 라우팅
 app.get("/", (req, res) => {
@@ -68,15 +69,14 @@ app.post("/register", async (req, res) => {
     return res.status(400).send("필수 필드가 누락되었습니다.");
   }
 
-
- // 비밀번호 해시화 처리
- let hashedPassword;
- try {
-   hashedPassword = await bcrypt.hash(password, 10); // 비밀번호 해시화
- } catch (err) {
-   console.error("비밀번호 해시화 오류:", err);
-   return res.status(500).send("비밀번호 처리 중 오류가 발생했습니다.");
- }
+  // 비밀번호 해시화 처리
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 10); // 비밀번호 해시화
+  } catch (err) {
+    console.error("비밀번호 해시화 오류:", err);
+    return res.status(500).send("비밀번호 처리 중 오류가 발생했습니다.");
+  }
 
   // 나이 계산
   const today = new Date();
@@ -140,21 +140,17 @@ app.post("/register", async (req, res) => {
       (err, result) => {
         if (err) {
           console.error("MySQL 오류:", err);
-          return res
-            .status(500)
-            .json({
-              success: false,
-              message: "사용자 등록에 실패했습니다.",
-              error: err.message,
-            });
-        }
-        res
-          .status(200)
-          .json({
-            success: true,
-            message: "사용자가 성공적으로 등록되었습니다.",
+          return res.status(500).json({
+            success: false,
+            message: "사용자 등록에 실패했습니다.",
+            error: err.message,
           });
-          console.log("서버 응답 완료: 사용자 등록 성공");
+        }
+        res.status(200).json({
+          success: true,
+          message: "사용자가 성공적으로 등록되었습니다.",
+        });
+        console.log("서버 응답 완료: 사용자 등록 성공");
       }
     );
   });
