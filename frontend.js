@@ -1,4 +1,6 @@
 // frontend.js
+import { submitForm } from "./backend.js";
+
 window.onload = function () {
   const yearSelect = document.getElementById("year");
   const monthSelect = document.getElementById("month");
@@ -72,5 +74,27 @@ window.onload = function () {
         radioInGroup.classList.remove("radio-error");
       });
     });
+  });
+  // 폼 제출 시 비밀번호 형식 검증
+  document.querySelector("form").addEventListener("submit", function (event) {
+    event.preventDefault(); // 폼 제출 중지
+
+    const password = passwordInput.value;
+
+    // 비밀번호 형식 검증 (영문, 숫자, 특수문자 포함)
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&#\+])[A-Za-z\d@$!%*?&#\+]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      // 경고창 표시
+      alert("비밀번호는 영문, 숫자, 특수문자를 포함해야 하며, 최소 8자 이상이어야 합니다.");
+
+      // 비밀번호 초기화
+      passwordInput.value = "";
+      passwordInput.focus(); // 비밀번호 입력 칸에 다시 포커스 설정
+      return; // 폼 제출 중지
+    }
+
+    // 비밀번호가 유효한 경우 폼 제출
+    submitForm(); // backend.js의 함수 호출
   });
 };

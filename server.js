@@ -69,6 +69,15 @@ app.post("/register", async (req, res) => {
     return res.status(400).send("필수 필드가 누락되었습니다.");
   }
 
+   // 비밀번호 형식 검증
+   const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+
+   if (!passwordRegex.test(password)) {
+     return res
+       .status(400)
+       .send("비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다.");
+   }
+
   // 비밀번호 해시화 처리
   let hashedPassword;
   try {

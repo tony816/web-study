@@ -199,7 +199,7 @@
         </div>
         <div class="text-center">
           <!-- 버튼을 중앙에 배치하기 위해 text-center 클래스를 사용 -->
-          <button type="button" class="btn-complete">가입 완료하기</button>
+          <button type="submit" class="btn-complete">가입 완료하기</button>
         </div>
       </form>
     </main>
@@ -223,13 +223,8 @@
     <script type="module">
       import { submitForm } from "./backend.js";
 
-      document
-        .querySelector(".btn-complete")
-        .addEventListener("click", (event) => {
-          event.preventDefault();
-          submitForm();
-        });
     </script>
-    <script src="frontend.js"></script>
+   <script type="module" src="frontend.js"></script>
+
   </body>
 </html>
