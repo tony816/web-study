@@ -34,18 +34,35 @@ window.onload = function () {
     daySelect.appendChild(option);
   }
 
-  // 휴대폰 번호 입력 시 자동 하이픈 추가
-  phoneInput.addEventListener("input", function () {
-    let phone = phoneInput.value.replace(/\D/g, ""); // 숫자만 남김
-    if (phone.length > 3 && phone.length <= 7) {
-      phone = phone.replace(/(\d{3})(\d+)/, "$1-$2");
-    } else if (phone.length > 7) {
-      phone = phone.replace(/(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
+  // 중복 확인 버튼 클릭 이벤트 등록
+  const checkEmailButton = document.getElementById("check-email");
+  checkEmailButton.addEventListener("click", function () {
+    const emailInput = document.getElementById("email").value.trim();
+    const emailProvider = document.getElementById("email-provider").value;
+    const email = `${emailInput}@${emailProvider}`;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      alert("유효하지 않은 이메일 형식입니다.");
+      return;
     }
-    phoneInput.value = phone;
+
+    // 서버로 이메일 중복 확인 요청
+    fetch(`http://localhost:3001/check-email?email=${email}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.available) {
+          alert("이미 사용 중인 이메일입니다.");
+        } else {
+          alert("사용 가능한 이메일입니다.");
+        }
+      })
+      .catch((error) => console.error("이메일 중복 확인 오류:", error));
   });
 
-  // 비밀번호 확인 함수
   function checkPasswordMatch() {
     if (passwordInput.value === "") {
       passwordMessage.textContent = ""; // 비어 있으면 메시지를 숨김
@@ -61,6 +78,17 @@ window.onload = function () {
   // 비밀번호 필드에 입력이 있을 때마다 확인
   passwordInput.addEventListener("input", checkPasswordMatch);
   confirmPasswordInput.addEventListener("input", checkPasswordMatch);
+
+  // 휴대폰 번호 입력 시 자동 하이픈 추가
+  phoneInput.addEventListener("input", function () {
+    let phone = phoneInput.value.replace(/\D/g, ""); // 숫자만 남김
+    if (phone.length > 3 && phone.length <= 7) {
+      phone = phone.replace(/(\d{3})(\d+)/, "$1-$2");
+    } else if (phone.length > 7) {
+      phone = phone.replace(/(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
+    }
+    phoneInput.value = phone;
+  });
 
   // 라디오 버튼 상태 변경 시 빨간 테두리 제거
   const radioGroups = document.querySelectorAll('input[type="radio"]');
@@ -82,14 +110,18 @@ window.onload = function () {
     const password = passwordInput.value;
 
     // 비밀번호 형식 검증 (영문, 숫자, 특수문자 포함)
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&#\+])[A-Za-z\d@$!%*?&#\+]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&#\+])[A-Za-z\d@$!%*?&#\+]{8,}$/;
 
     if (!passwordRegex.test(password)) {
       // 경고창 표시
-      alert("비밀번호는 영문, 숫자, 특수문자를 포함해야 하며, 최소 8자 이상이어야 합니다.");
+      alert(
+        "비밀번호는 영문, 숫자, 특수문자를 포함해야 하며, 최소 8자 이상이어야 합니다."
+      );
 
       // 비밀번호 초기화
       passwordInput.value = "";
+      confirmPasswordInput.value = "";
       passwordInput.focus(); // 비밀번호 입력 칸에 다시 포커스 설정
       return; // 폼 제출 중지
     }
