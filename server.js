@@ -1,4 +1,6 @@
 const express = require("express");
+const fs = require("fs");
+const https = require("https");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -23,10 +25,36 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  next();
+});
+
+
 // 기본 라우팅
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "apply.html")); // apply.html로 이동
 });
+
+
+const sslOptions = {
+  key: fs.readFileSync("private-key.pem"),
+  cert: fs.readFileSync("certificate.pem"),
+};
+
+
+// HTTPS 서버 실행
+https.createServer(sslOptions, app).listen(3001, () => {
+  console.log("HTTPS 서버가 https://localhost:3001 에서 실행 중입니다.");
+});
+
+const http = require("http");
+
+http.createServer((req, res) => {
+  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+  res.end();
+}).listen(80);
+
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -214,6 +242,4 @@ app.get("/users", (req, res) => {
   });
 });
 
-app.listen(3001, () => {
-  console.log("서버가 http://localhost:3001 에서 실행 중입니다.");
-});
+

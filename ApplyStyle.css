@@ -153,6 +153,39 @@ main {
     margin-bottom: -10px;
 }
 
+
+/* 이메일 */
+.d-flex-align-items-center {
+    display: flex;
+    align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
+    margin-bottom: 5px;
+}
+
+.email-at {
+    margin: 0 10px; /* 좌우 여백 조정 */
+    font-size: 1em; /* 필요에 따라 크기를 조정 */
+    line-height: 1; /* line-height를 줄여서 수직 정렬 */
+}
+
+#check-email {
+    background-color: #f0f0f0;
+    color: black;
+    padding: 5px 10px;
+    font-size: 0.8em;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#check-email:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+
 /* 비밀번호 */
 .password-hint {
     font-size: 0.8em;  /* 비밀번호 입력 필드보다 작은 크기로 설정 */
@@ -165,37 +198,6 @@ main {
     color: red;       /* 비밀번호 일치 여부에 따라 동적으로 변경됨 */
     margin-left: 90px;
 }
-
-/* 이메일 */
-.d-flex-align-items-center {
-    display: flex;
-    align-items: center; /* 자식 요소들을 수직 가운데 정렬 */
-    margin-bottom: 20px;
-}
-
-.email-at {
-    margin: 0 10px; /* 좌우 여백 조정 */
-    font-size: 1em; /* 필요에 따라 크기를 조정 */
-    line-height: 1; /* line-height를 줄여서 수직 정렬 */
-}
-
-#check-email {
-    background-color: #f0f0f0;
-    color: black;
-    padding: 10px 20px;
-    font-size: 1em;
-    border: 1px solid black;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#check-email:hover {
-    background-color: #e0e0e0;
-    transform: scale(1.05);
-}
-
 
 /* 구독 기간 간격 */
 .form-label {

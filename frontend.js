@@ -39,6 +39,19 @@ window.onload = function () {
   checkEmailButton.addEventListener("click", function () {
     const emailInput = document.getElementById("email").value.trim();
     const emailProvider = document.getElementById("email-provider").value;
+    
+    if (!emailInput) {
+      alert("이메일을 입력해 주세요.");
+      return;
+    }
+    
+    const emailUsernameRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9]+$/;
+
+    if (!emailUsernameRegex.test(emailInput)) {
+      alert("이메일 아이디는 영문과 숫자 조합이어야 합니다.");
+      return;
+    }
+
     const email = `${emailInput}@${emailProvider}`;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
