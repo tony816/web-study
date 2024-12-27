@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, "/")));
 
 app.use(
   cors({
-    origin: "http://localhost:3001", // 클라이언트가 실행되는 주소와 포트
+    origin: "https://localhost:3001", // 클라이언트가 실행되는 주소와 포트
     methods: ["GET", "POST"], // 허용할 HTTP 메서드
     credentials: true, // 쿠키 허용 (필요 시)
   })
@@ -89,6 +89,32 @@ app.get("/check-email", (req, res) => {
     res.json({ available: isAvailable });
   });
 });
+
+app.get("/check-user", (req, res) => {
+  const { name, phone } = req.query;
+
+  if (!name || !phone) {
+      return res.status(400).send("이름과 전화번호가 제공되지 않았습니다.");
+  }
+
+  const query = `
+      SELECT COUNT(*) AS count 
+      FROM users 
+      WHERE name = ? AND phone = ?
+  `;
+
+  db.query(query, [name, phone], (err, results) => {
+      if (err) {
+          console.error("MySQL 오류:", err);
+          return res.status(500).send("서버 오류가 발생했습니다.");
+      }
+
+      const isAvailable = results[0].count === 0; // 중복이 없으면 true
+      res.json({ available: isAvailable });
+  });
+});
+
+
 
 app.post("/register", async (req, res) => {
   console.log("서버로 POST 요청 도착:", req.body); // 디버깅용
@@ -178,6 +204,9 @@ app.post("/register", async (req, res) => {
       return res.status(400).send("이미 등록된 이메일입니다.");
     }
 
+
+
+    
     const insertQuery = `
       INSERT INTO users (name, gender, birthdate, age, email, password, phone, subscription_period)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)

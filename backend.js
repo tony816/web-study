@@ -47,7 +47,7 @@ export function submitForm() {
 
   isRequestSent = true;
 
-  fetch("http://localhost:3001/register", {
+  fetch("https://localhost:3001/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include", // 쿠키와 인증 정보를 포함

@@ -1,7 +1,6 @@
 // frontend.js
 import { submitForm } from "./backend.js";
 
-window.onload = function () {
   const yearSelect = document.getElementById("year");
   const monthSelect = document.getElementById("month");
   const daySelect = document.getElementById("day");
@@ -35,6 +34,7 @@ window.onload = function () {
   }
 
   // 중복 확인 버튼 클릭 이벤트 등록
+  document.addEventListener("DOMContentLoaded", function () {
   const checkEmailButton = document.getElementById("check-email");
   checkEmailButton.addEventListener("click", function () {
     const emailInput = document.getElementById("email").value.trim();
@@ -61,7 +61,7 @@ window.onload = function () {
     }
 
     // 서버로 이메일 중복 확인 요청
-    fetch(`http://localhost:3001/check-email?email=${email}`, {
+    fetch(`https://localhost:3001/check-email?email=${email}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     })
@@ -74,6 +74,7 @@ window.onload = function () {
         }
       })
       .catch((error) => console.error("이메일 중복 확인 오류:", error));
+  });
   });
 
   function checkPasswordMatch() {
@@ -142,4 +143,32 @@ window.onload = function () {
     // 비밀번호가 유효한 경우 폼 제출
     submitForm(); // backend.js의 함수 호출
   });
-};
+
+
+document.querySelector("form").addEventListener("submit", function (event) {
+  event.preventDefault(); // 기본 제출 동작 방지
+
+  const nameInput = document.getElementById("name").value.trim();
+  const phoneInput = document.getElementById("phone").value.trim();
+
+  if (!nameInput || !phoneInput) {
+      alert("이름과 전화번호를 입력해 주세요.");
+      return;
+  }
+
+  // 서버에 이름과 전화번호 중복 확인 요청
+  fetch(`https://localhost:3001/check-user?name=${nameInput}&phone=${phoneInput}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+  })
+      .then((response) => response.json())
+      .then((data) => {
+          if (!data.available) {
+              alert("이미 가입된 사용자 정보입니다.");
+          } else {
+              // 중복이 없으면 최종 폼 데이터 제출
+              submitForm();
+          }
+      })
+      .catch((error) => console.error("사용자 중복 확인 오류:", error));
+});
