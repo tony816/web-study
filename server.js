@@ -142,6 +142,18 @@ app.post("/register", async (req, res) => {
     return res.status(400).send("필수 필드가 누락되었습니다.");
   }
 
+    const usercheckQuery = `
+       SELECT COUNT(*) AS count 
+    FROM users 
+    WHERE name = ? AND phone = ?
+    `;
+    const [results] = await db.promise().query(usercheckQuery, [name, phone]);
+
+    if (results[0].count > 0) {
+      return res.status(400).json({ success: false, message: "중복된 사용자 정보가 존재합니다." });
+    }
+  
+
   // 비밀번호 형식 검증
   const passwordRegex =
     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
