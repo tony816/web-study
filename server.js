@@ -26,22 +26,22 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  res.setHeader(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains"
+  );
   next();
 });
-
 
 // 기본 라우팅
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "apply.html")); // apply.html로 이동
 });
 
-
 const sslOptions = {
   key: fs.readFileSync("private-key.pem"),
   cert: fs.readFileSync("certificate.pem"),
 };
-
 
 // HTTPS 서버 실행
 https.createServer(sslOptions, app).listen(3001, () => {
@@ -50,11 +50,12 @@ https.createServer(sslOptions, app).listen(3001, () => {
 
 const http = require("http");
 
-http.createServer((req, res) => {
-  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
-  res.end();
-}).listen(80);
-
+http
+  .createServer((req, res) => {
+    res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+    res.end();
+  })
+  .listen(80);
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -94,7 +95,7 @@ app.get("/check-user", (req, res) => {
   const { name, phone } = req.query;
 
   if (!name || !phone) {
-      return res.status(400).send("이름과 전화번호가 제공되지 않았습니다.");
+    return res.status(400).send("이름과 전화번호가 제공되지 않았습니다.");
   }
 
   const query = `
@@ -104,17 +105,15 @@ app.get("/check-user", (req, res) => {
   `;
 
   db.query(query, [name, phone], (err, results) => {
-      if (err) {
-          console.error("MySQL 오류:", err);
-          return res.status(500).send("서버 오류가 발생했습니다.");
-      }
+    if (err) {
+      console.error("MySQL 오류:", err);
+      return res.status(500).send("서버 오류가 발생했습니다.");
+    }
 
-      const isAvailable = results[0].count === 0; // 중복이 없으면 true
-      res.json({ available: isAvailable });
+    const isAvailable = results[0].count === 0; // 중복이 없으면 true
+    res.json({ available: isAvailable });
   });
 });
-
-
 
 app.post("/register", async (req, res) => {
   console.log("서버로 POST 요청 도착:", req.body); // 디버깅용
@@ -142,17 +141,19 @@ app.post("/register", async (req, res) => {
     return res.status(400).send("필수 필드가 누락되었습니다.");
   }
 
-    const usercheckQuery = `
-       SELECT COUNT(*) AS count 
+  const usercheckQuery = `
+    SELECT COUNT(*) AS count 
     FROM users 
     WHERE name = ? AND phone = ?
     `;
-    const [results] = await db.promise().query(usercheckQuery, [name, phone]);
+  const [results] = await db.promise().query(usercheckQuery, [name, phone]);
 
-    if (results[0].count > 0) {
-      return res.status(400).json({ success: false, message: "중복된 사용자 정보가 존재합니다." });
-    }
-  
+  if (results[0].count > 0) {
+    return res.status(200).json({
+      success: false,
+      message: "중복된 사용자 정보가 존재합니다.",
+    });
+  }
 
   // 비밀번호 형식 검증
   const passwordRegex =
@@ -216,9 +217,6 @@ app.post("/register", async (req, res) => {
       return res.status(400).send("이미 등록된 이메일입니다.");
     }
 
-
-
-    
     const insertQuery = `
       INSERT INTO users (name, gender, birthdate, age, email, password, phone, subscription_period)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -282,5 +280,3 @@ app.get("/users", (req, res) => {
     }
   });
 });
-
-
