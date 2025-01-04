@@ -92,26 +92,37 @@ app.get("/check-email", (req, res) => {
 });
 
 app.get("/check-user", (req, res) => {
-  const { name, phone } = req.query;
+  const { name, phone, birthdate } = req.query;
 
-  if (!name || !phone) {
+  if (!name || !phone || !birthdate) {
     return res.status(400).send("이름과 전화번호가 제공되지 않았습니다.");
   }
 
   const query = `
       SELECT COUNT(*) AS count 
       FROM users 
-      WHERE name = ? AND phone = ?
+     WHERE (name LIKE ? OR phone LIKE ? OR birthdate = ?)
   `;
 
-  db.query(query, [name, phone], (err, results) => {
+  const namePattern = `%${name}%`;
+  const phonePattern = `%${phone}%`;
+
+  db.query(query, [namePattern, phonePattern, birthdate], (err, results) => {
     if (err) {
       console.error("MySQL 오류:", err);
       return res.status(500).send("서버 오류가 발생했습니다.");
     }
-
-    const isAvailable = results[0].count === 0; // 중복이 없으면 true
-    res.json({ available: isAvailable });
+    if (results.length > 0) {
+      res.json({
+        available: false,
+        message: "비슷한 사용자 정보가 이미 존재합니다.",
+        likeUsers: results, // 변경된 변수 이름
+      });
+    } else {
+      res.json({
+        available: true,
+      });
+    }
   });
 });
 
@@ -144,9 +155,11 @@ app.post("/register", async (req, res) => {
   const usercheckQuery = `
     SELECT COUNT(*) AS count 
     FROM users 
-    WHERE name = ? AND phone = ?
+    WHERE  (name LIKE ? OR phone LIKE ? OR birthdate = ?)
     `;
-  const [results] = await db.promise().query(usercheckQuery, [name, phone]);
+  const [results] = await db
+    .promise()
+    .query(usercheckQuery, [name, phone, birthdate]);
 
   if (results[0].count > 0) {
     return res.status(200).json({

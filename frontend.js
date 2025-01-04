@@ -149,15 +149,30 @@ document.querySelector("form").addEventListener("submit", function (event) {
 
   const nameInput = document.getElementById("name").value.trim();
   const phoneInput = document.getElementById("phone").value.trim();
+  const year = document.getElementById("year").value;
+  const month = document.getElementById("month").value;
+  const day = document.getElementById("day").value;
 
-  if (!nameInput || !phoneInput) {
-    alert("이름과 전화번호를 입력해 주세요.");
+  if (!nameInput) {
+    alert("이름을 입력해 주세요.");
     return;
   }
 
+  if (!phoneInput) {
+    alert("전화번호를 입력해 주세요.");
+    return;
+  }
+
+  if (!year || !month || !day) {
+    alert("생년월일을 모두 선택해 주세요.");
+    return;
+  }
+
+  const birthdate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+
   // 서버에 이름과 전화번호 중복 확인 요청
   fetch(
-    `https://localhost:3001/check-user?name=${nameInput}&phone=${phoneInput}`,
+    `https://localhost:3001/check-user?name=${nameInput}&phone=${phoneInput}&birthdate=${birthdate}`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -166,6 +181,16 @@ document.querySelector("form").addEventListener("submit", function (event) {
     .then((response) => response.json())
     .then((data) => {
       if (!data.available) {
+        const likeUsers = data.likeUsers
+          .map(
+            (likeUser) =>
+              `이름: ${likeUser.name}, 전화번호: ${likeUser.phone}, 생년월일: ${likeUser.birthdate}`
+          )
+          .join("\n");
+
+        alert(
+          `비슷한 사용자 정보가 존재합니다:\n\n${likeUsers}\n\n정확한 정보를 입력하거나 기존 계정을 사용하세요.`
+        );
         return;
       } else {
         // 중복이 없으면 최종 폼 데이터 제출
