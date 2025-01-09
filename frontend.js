@@ -180,7 +180,7 @@ document.querySelector("form").addEventListener("submit", function (event) {
   )
     .then((response) => response.json())
     .then((data) => {
-      if (!data.available) {
+      if (!data.available && data.likeUsers.length > 0) {
         const likeUsers = data.likeUsers
           .map(
             (likeUser) =>
