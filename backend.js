@@ -68,6 +68,8 @@ export function submitForm() {
         const radioGroups = document.querySelectorAll('input[type="radio"]');
         radioGroups.forEach((radio) => radio.classList.remove("radio-error"));
       } else if (data.message === "중복된 사용자 정보가 존재합니다.") {
+        // 중복된 사용자 처리 (에러가 아닌 알림만 표시)
+        alert("이미 가입된 사용자 정보입니다.");
         isRequestSent = false; // 중복인 경우에도 초기화 필요
       } else {
         // 기타 서버 에러 처리
