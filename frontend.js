@@ -180,17 +180,9 @@ document.querySelector("form").addEventListener("submit", function (event) {
   )
     .then((response) => response.json())
     .then((data) => {
-      if (!data.available && data.likeUsers.length > 0) {
-        const likeUsers = data.likeUsers
-          .map(
-            (likeUser) =>
-              `이름: ${likeUser.name}, 전화번호: ${likeUser.phone}, 생년월일: ${likeUser.birthdate}`
-          )
-          .join("\n");
-
-        alert(
-          `비슷한 사용자 정보가 존재합니다:\n\n${likeUsers}\n\n정확한 정보를 입력하거나 기존 계정을 사용하세요.`
-        );
+      if (!data.available) {
+      
+        alert("중복된 사용자 정보가 존재합니다.");
         return;
       } else {
         // 중복이 없으면 최종 폼 데이터 제출

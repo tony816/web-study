@@ -101,13 +101,12 @@ app.get("/check-user", (req, res) => {
   const query = `
       SELECT COUNT(*) AS count 
       FROM users 
-     WHERE (name LIKE ? OR phone LIKE ? OR birthdate = ?)
+     WHERE name ? AND phone ? AND birthdate = ?)
   `;
 
-  const namePattern = `%${name}%`;
-  const phonePattern = `%${phone}%`;
 
-  db.query(query, [namePattern, phonePattern, birthdate], (err, results) => {
+
+  db.query(query, [name, phone, birthdate], (err, results) => {
     if (err) {
       console.error("MySQL 오류:", err);
       return res.status(500).send("서버 오류가 발생했습니다.");
@@ -115,7 +114,7 @@ app.get("/check-user", (req, res) => {
     if (results.length > 0) {
       res.json({
         available: false,
-        message: "비슷한 사용자 정보가 이미 존재합니다.",
+        message: "중복된 사용자 정보가 존재합니다.",
         likeUsers: results, // 변경된 변수 이름
       });
     } else {
@@ -155,7 +154,7 @@ app.post("/register", async (req, res) => {
   const usercheckQuery = `
     SELECT COUNT(*) AS count 
     FROM users 
-    WHERE  (name LIKE ? OR phone LIKE ? OR birthdate = ?)
+    WHERE  name AND phone ? AND birthdate = ?)
     `;
   const [results] = await db
     .promise()
