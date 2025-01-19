@@ -121,11 +121,19 @@ main {
   align-items: center;
 }
 
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 가로 3개 */
+  column-gap: 20px;
+  row-gap: 60px;
+  justify-items: center; /* 각 항목을 수평 중앙 정렬 */
+  width: 100%;
+  margin-top: 20px;
+}
+
 .content-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+  width: 300px; /* 각 컨테이너의 고정 너비 */
+  text-align: center; /* 텍스트 중앙 정렬 */
 }
 
 .thumbnail {

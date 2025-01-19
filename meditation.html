@@ -43,15 +43,68 @@
 
     <!-- 메인 콘텐츠 -->
     <main>
-      <div class="content-container">
-        <div class="thumbnail" onclick="toggleAudio('media/battle.mp3', this)">
-          <img src="media/bunny.jpg" alt="썸네일 이미지" />
-          <div class="play-icon play"></div>
-          <!-- 아이콘은 썸네일 내부 -->
+      <div class="grid-container">
+        <!-- 첫 번째 줄 -->
+        <div class="content-container">
+          <div
+            class="thumbnail"
+            onclick="toggleAudio('media/battle.mp3', this)"
+          >
+            <img src="media/bunny.jpg" alt="썸네일 이미지" />
+            <div class="play-icon play"></div>
+          </div>
+          <div class="title">
+            <h2>첫 번째 제목</h2>
+          </div>
         </div>
-        <div class="title">
-          <h2>여기에 제목을 표시합니다</h2>
-          <!-- 제목과 아이콘은 별개 -->
+        <div class="content-container">
+          <div
+            class="thumbnail"
+            onclick="toggleAudio('media/forest.mp3', this)"
+          >
+            <img src="media/forest.jpg" alt="썸네일 이미지" />
+            <div class="play-icon play"></div>
+          </div>
+          <div class="title">
+            <h2>두 번째 제목</h2>
+          </div>
+        </div>
+        <div class="content-container">
+          <div class="thumbnail" onclick="toggleAudio('media/ocean.mp3', this)">
+            <img src="media/ocean.jpg" alt="썸네일 이미지" />
+            <div class="play-icon play"></div>
+          </div>
+          <div class="title">
+            <h2>세 번째 제목</h2>
+          </div>
+        </div>
+        <!-- 두 번째 줄 -->
+        <div class="content-container">
+          <div class="thumbnail" onclick="toggleAudio('media/wind.mp3', this)">
+            <img src="media/wind.jpg" alt="썸네일 이미지" />
+            <div class="play-icon play"></div>
+          </div>
+          <div class="title">
+            <h2>네 번째 제목</h2>
+          </div>
+        </div>
+        <div class="content-container">
+          <div class="thumbnail" onclick="toggleAudio('media/rain.mp3', this)">
+            <img src="media/rain.jpg" alt="썸네일 이미지" />
+            <div class="play-icon play"></div>
+          </div>
+          <div class="title">
+            <h2>다섯 번째 제목</h2>
+          </div>
+        </div>
+        <div class="content-container">
+          <div class="thumbnail" onclick="toggleAudio('media/fire.mp3', this)">
+            <img src="media/fire.jpg" alt="썸네일 이미지" />
+            <div class="play-icon play"></div>
+          </div>
+          <div class="title">
+            <h2>여섯 번째 제목</h2>
+          </div>
         </div>
       </div>
     </main>
