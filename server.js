@@ -6,16 +6,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const app = express();
-
-app.use(cors());
-app.use(express.json()); // JSON 데이터를 처리
-app.use(bodyParser.urlencoded({ extended: true })); // URL-encoded 데이터 처리
-app.use(bodyParser.json()); // JSON 데이터 처리
-
-// 정적 파일 제공
-app.use(express.static(path.join(__dirname, "/")));
 
 app.use(
   cors({
@@ -24,6 +17,14 @@ app.use(
     credentials: true, // 쿠키 허용 (필요 시)
   })
 );
+app.use(express.json()); // JSON 데이터를 처리
+app.use(bodyParser.urlencoded({ extended: true })); // URL-encoded 데이터 처리
+app.use(bodyParser.json()); // JSON 데이터 처리
+
+// 정적 파일 제공
+app.use(express.static(path.join(__dirname, "/")));
+
+
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -114,6 +115,68 @@ app.get("/check-user", (req, res) => {
     res.json({ available: isAvailable });
   });
 });
+
+//JWT 비밀 키
+const JWT_SECRET = "your_secret_key";
+
+// 로그인 엔드포인트
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).send("이메일과 비밀번호를 입력해주세요.");
+    }
+
+    // 데이터베이스에서 사용자 확인
+    db.query(
+        "SELECT * FROM users WHERE email = ?",
+        [email],
+        async (err, results) => {
+            if (err) {
+                console.error("데이터베이스 오류:", err);
+                return res.status(500).send("서버 오류가 발생했습니다.");
+            }
+
+            if (results.length === 0) {
+                return res.status(401).send("이메일 또는 비밀번호가 올바르지 않습니다.");
+            }
+
+            const user = results[0];
+
+            // 비밀번호 비교
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(401).send("이메일 또는 비밀번호가 올바르지 않습니다.");
+            }
+
+            // JWT 토큰 생성
+            const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+
+            res.json({ message: "로그인 성공", token });
+        }
+    );
+});
+
+// 인증 미들웨어
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
+
+  if (!token) return res.status(401).send("인증 토큰이 제공되지 않았습니다.");
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+      if (err) return res.status(403).send("유효하지 않은 토큰입니다.");
+      req.user = user; // 사용자 정보를 req 객체에 저장
+      next();
+  });
+}
+
+app.get("/dashboard", authenticateToken, (req, res) => {
+  res.json({ message: "대시보드 데이터", user: req.user });
+});
+
+
+
 
 app.post("/register", async (req, res) => {
   console.log("서버로 POST 요청 도착:", req.body); // 디버깅용
