@@ -343,3 +343,38 @@ app.get("/users", (req, res) => {
     }
   });
 });
+
+
+// 이하에서부터는 로그인 이용자들을 위한 로직
+// 오디오 재생 로그 저장 API
+app.post("/audio-played", (req, res) => {
+  const { userId, audioFile, duration } = req.body;
+
+  if (!userId || !audioFile || !duration) {
+      return res.status(400).send("필수 데이터가 누락되었습니다.");
+  }
+
+  const query = `
+      INSERT INTO audio_logs (user_id, audio_file, duration)
+      VALUES (?, ?, ?)
+  `;
+  db.query(query, [userId, audioFile, duration], (err, result) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).send("오디오 로그 저장에 실패했습니다.");
+      }
+      res.status(200).send("오디오 재생 로그가 저장되었습니다.");
+  });
+});
+
+app.get("/user-audio-logs/:userId", (req, res) => {
+  const userId = req.params.userId;
+  const query = "SELECT * FROM audio_logs WHERE user_id = ?";
+  db.query(query, [userId], (err, results) => {
+      if (err) {
+          console.error(err);
+          return res.status(500).send("데이터 조회 실패");
+      }
+      res.status(200).json(results);
+  });
+});

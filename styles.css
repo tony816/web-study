@@ -1,3 +1,10 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
 /* 기본 스타일 */
 body {
     font-family: Arial, sans-serif;
@@ -19,7 +26,9 @@ header {
     display: flex;
     align-items: center;      /* 세로 중앙 정렬 */
     justify-content: space-between;
-    background-color: #f0f0f0;
+    background-color: white;
+    border-bottom: 1px solid #ECE7E7F8;
+    
 }
 
 /* 로고 이미지 스타일 */
@@ -53,6 +62,7 @@ nav a:not(:last-child)::after {
     height: 60%;          /* 경계선 높이 설정 (텍스트 중심에 위치) */
     width: 1px;
     background-color: black;  /* 경계선 색상 */
+    
 }
 
 
@@ -69,7 +79,7 @@ nav a:not(:last-child)::after {
     font-size: 1em;
     font-weight: bold;
     border-radius: 50px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.1s ease, transform 0.1s ease;
 }
 
 /* 로그인 버튼 스타일 */
@@ -84,6 +94,41 @@ nav a:not(:last-child)::after {
     transform: scale(1.05);
 }
 
+
+.auth-buttons {
+    display: none; /* 초기 상태에서 숨김 */
+}
+.auth-buttons.visible {
+    display: flex; /* 스크립트가 로드된 후 표시 */
+}
+
+
+.logout-button {
+    display: flex;
+    align-items: center;
+}
+
+.logout-button {
+    text-decoration: none;
+    margin-left: 10px;
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    border-radius: 50px;
+    transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+.logout-button{
+    background-color: #A3DC8B;
+    color: black;
+    border: 1px solid black;
+}
+
+.logout-button:hover {
+    background-color: #8cc679; /* 호버 효과 */
+    color: white;
+    transform: scale(1.05);
+}
 
 /* 헤더와 결제 카드의 btn-primary 스타일을 동일하게 설정 */
 .btn-primary {  
@@ -116,7 +161,9 @@ header .btn-primary {
 }
 
 /* 메인 콘텐츠 스타일 */
-main {
+main,
+main.cs-container,
+main.content-section{
     padding: 20px;
     margin-top: 100px; /* 헤더의 높이만큼 여백 추가 */
     margin-bottom: 100px; /* 푸터와 간격을 두기 위한 마진 추가 */
@@ -169,6 +216,49 @@ main {
     font-size: 0.4em;        /* 작은 텍스트 크기 */
     vertical-align: middle;  /* 수직 정렬 */
 }
+
+
+/* 이미지 및 버튼 스타일 */
+.cs-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 80vh; /* 화면의 대부분을 차지하도록 */
+    position: relative;
+    z-index: 500;
+}
+
+.cs-image {
+    width: 300px; /* 이미지 기본 크기 */
+    max-width: 100%; /* 화면보다 커지지 않도록 */
+    height: auto; /* 비율 유지 */
+    margin-bottom: 20px;
+}
+
+.cs-button {
+    background-color: #A3DC8B; /* 버튼 색상 */
+    color: black;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: 1px solid black;
+    border-radius: 50px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    position: relative;
+    z-index: 501;
+}
+
+.cs-button:hover {
+    background-color: #8cc679; /* 호버 효과 */
+    transform: scale(1.05); /* 약간 확대 */
+}
+
+
 
 
 /* 푸터 스타일 */

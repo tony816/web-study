@@ -19,26 +19,7 @@
   </head>
   <body>
     <!-- 헤더 섹션은 tede.html과 동일하게 -->
-    <header>
-      <a href="tede.html">
-        <img
-          src="https://assets.softr-files.com/applications/75e4b20f-ee28-434c-a4bf-e731765f8ac9/assets/d7c11249-cdde-48e6-b3ef-9dad52d500aa.png"
-          alt="티어딜릿 로고"
-          class="logo"
-        />
-      </a>
-      <div class="header-right">
-        <nav>
-          <a href="tede.html">홈</a>
-          <a href="about.html">소개</a>
-          <a href="cs.html">고객센터</a>
-        </nav>
-        <div class="auth-buttons">
-          <a href="login.html" class="btn-login">로그인</a>
-          <a href="apply.html" class="btn btn-primary">가입 신청하기</a>
-        </div>
-      </div>
-    </header>
+    <div id="header-placeholder"></div>
 
     <!-- 폼 섹션 -->
     <main>
@@ -224,6 +205,14 @@
       </div>
     </footer>
 
+    <script> fetch("header.html")
+      .then(response => response.text())
+      .then(data => {
+          document.getElementById("header-placeholder").innerHTML = data;
+          loadHeaderJS();
+      });
+    </script>
+    <script src="header.js" defer></script>
     <script type="module">
       import { submitForm } from "./backend.js";
 
