@@ -28,7 +28,8 @@
         <div class="content-container">
           <div
             class="thumbnail"
-            onclick="toggleAudio('media/battle.mp3', this)"
+            data-audio="media/battle.mp3"
+            onclick="toggleAudio(this)"
           >
             <img src="media/bunny.jpg" alt="썸네일 이미지" />
             <div class="play-icon play"></div>
@@ -40,7 +41,8 @@
         <div class="content-container">
           <div
             class="thumbnail"
-            onclick="toggleAudio('media/forest.mp3', this)"
+            data-audio="media/forest.mp3"
+            onclick="toggleAudio(this)"
           >
             <img src="media/forest.jpg" alt="썸네일 이미지" />
             <div class="play-icon play"></div>
@@ -104,15 +106,16 @@
         >
       </div>
     </footer>
-    
-    <script> fetch("header.html")
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById("header-placeholder").innerHTML = data;
-        loadHeaderJS();
-    });
-  </script>
+
+    <script>
+      fetch("header.html")
+        .then((response) => response.text())
+        .then((data) => {
+          document.getElementById("header-placeholder").innerHTML = data;
+          loadHeaderJS();
+        });
+    </script>
     <script src="header.js" defer></script>
-    <script src="meditation.js"></script>
+    <script src="meditation.js" defer></script>
   </body>
 </html>

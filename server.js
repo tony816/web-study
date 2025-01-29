@@ -21,10 +21,10 @@ app.use(express.json()); // JSON 데이터를 처리
 app.use(bodyParser.urlencoded({ extended: true })); // URL-encoded 데이터 처리
 app.use(bodyParser.json()); // JSON 데이터 처리
 
-// 정적 파일 제공
 app.use(express.static(path.join(__dirname, "/")));
 
-
+// 정적 파일 제공
+app.use("/media", express.static(path.join(__dirname, "media")));
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -121,40 +121,48 @@ const JWT_SECRET = "your_secret_key";
 
 // 로그인 엔드포인트
 app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).send("이메일과 비밀번호를 입력해주세요.");
+  if (!email || !password) {
+    return res.status(400).send("이메일과 비밀번호를 입력해주세요.");
+  }
+
+  // 데이터베이스에서 사용자 확인
+  db.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    async (err, results) => {
+      if (err) {
+        console.error("데이터베이스 오류:", err);
+        return res.status(500).send("서버 오류가 발생했습니다.");
+      }
+
+      if (results.length === 0) {
+        return res
+          .status(401)
+          .send("이메일 또는 비밀번호가 올바르지 않습니다.");
+      }
+
+      const user = results[0];
+
+      // 비밀번호 비교
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res
+          .status(401)
+          .send("이메일 또는 비밀번호가 올바르지 않습니다.");
+      }
+
+      // JWT 토큰 생성
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      res.json({ message: "로그인 성공", token });
     }
-
-    // 데이터베이스에서 사용자 확인
-    db.query(
-        "SELECT * FROM users WHERE email = ?",
-        [email],
-        async (err, results) => {
-            if (err) {
-                console.error("데이터베이스 오류:", err);
-                return res.status(500).send("서버 오류가 발생했습니다.");
-            }
-
-            if (results.length === 0) {
-                return res.status(401).send("이메일 또는 비밀번호가 올바르지 않습니다.");
-            }
-
-            const user = results[0];
-
-            // 비밀번호 비교
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            if (!isPasswordValid) {
-                return res.status(401).send("이메일 또는 비밀번호가 올바르지 않습니다.");
-            }
-
-            // JWT 토큰 생성
-            const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
-
-            res.json({ message: "로그인 성공", token });
-        }
-    );
+  );
 });
 
 // 인증 미들웨어
@@ -165,18 +173,15 @@ function authenticateToken(req, res, next) {
   if (!token) return res.status(401).send("인증 토큰이 제공되지 않았습니다.");
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-      if (err) return res.status(403).send("유효하지 않은 토큰입니다.");
-      req.user = user; // 사용자 정보를 req 객체에 저장
-      next();
+    if (err) return res.status(403).send("유효하지 않은 토큰입니다.");
+    req.user = user; // 사용자 정보를 req 객체에 저장
+    next();
   });
 }
 
 app.get("/dashboard", authenticateToken, (req, res) => {
   res.json({ message: "대시보드 데이터", user: req.user });
 });
-
-
-
 
 app.post("/register", async (req, res) => {
   console.log("서버로 POST 요청 도착:", req.body); // 디버깅용
@@ -345,36 +350,33 @@ app.get("/users", (req, res) => {
 });
 
 
-// 이하에서부터는 로그인 이용자들을 위한 로직
-// 오디오 재생 로그 저장 API
+//이하는 로그인한 유저 관련 로직
+// 오디오 기록
+
 app.post("/audio-played", (req, res) => {
+  console.log("📌 서버가 요청을 받음 - 받은 데이터:", req.body);
+
   const { userId, audioFile, duration } = req.body;
 
   if (!userId || !audioFile || !duration) {
-      return res.status(400).send("필수 데이터가 누락되었습니다.");
+    console.error("❌ 필수 데이터 누락:", req.body);
+    return res.status(400).send("필수 데이터가 누락되었습니다.");
   }
 
-  const query = `
-      INSERT INTO audio_logs (user_id, audio_file, duration)
-      VALUES (?, ?, ?)
-  `;
-  db.query(query, [userId, audioFile, duration], (err, result) => {
-      if (err) {
-          console.error(err);
-          return res.status(500).send("오디오 로그 저장에 실패했습니다.");
-      }
-      res.status(200).send("오디오 재생 로그가 저장되었습니다.");
-  });
-});
+  console.log("📌 DB에 저장할 데이터:", { userId, audioFile, duration });
 
-app.get("/user-audio-logs/:userId", (req, res) => {
-  const userId = req.params.userId;
-  const query = "SELECT * FROM audio_logs WHERE user_id = ?";
-  db.query(query, [userId], (err, results) => {
-      if (err) {
-          console.error(err);
-          return res.status(500).send("데이터 조회 실패");
-      }
-      res.status(200).json(results);
+  const query = `
+    INSERT INTO audio_logs (user_id, audio_file, duration)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(query, [userId, audioFile, duration], (err, result) => {
+    if (err) {
+      console.error("❌ DB 오류:", err);
+      return res.status(500).send("오디오 로그 저장 실패");
+    }
+
+    console.log("✅ DB 저장 성공:", result);
+    res.status(200).send("오디오 재생 로그가 저장되었습니다.");
   });
 });
