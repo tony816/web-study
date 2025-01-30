@@ -354,29 +354,69 @@ app.get("/users", (req, res) => {
 // 오디오 기록
 
 app.post("/audio-played", (req, res) => {
-  console.log("📌 서버가 요청을 받음 - 받은 데이터:", req.body);
+  console.log("📌 받은 요청 데이터:", req.body);
 
-  const { userId, audioFile, duration } = req.body;
-
-  if (!userId || !audioFile || !duration) {
+  const { userId, audioFile, Playtime } = req.body;  // ✅ duration → Playtime 변경
+  if (!userId || !audioFile || !Playtime) {
     console.error("❌ 필수 데이터 누락:", req.body);
     return res.status(400).send("필수 데이터가 누락되었습니다.");
   }
 
-  console.log("📌 DB에 저장할 데이터:", { userId, audioFile, duration });
+  // 사용자 이름 가져오기
+  const userQuery = `SELECT name FROM users WHERE id = ?`;
 
-  const query = `
-    INSERT INTO audio_logs (user_id, audio_file, duration)
-    VALUES (?, ?, ?)
-  `;
-
-  db.query(query, [userId, audioFile, duration], (err, result) => {
-    if (err) {
-      console.error("❌ DB 오류:", err);
-      return res.status(500).send("오디오 로그 저장 실패");
+  db.query(userQuery, [userId], (err, userResult) => {
+    if (err || userResult.length === 0) {
+      console.error("❌ 사용자 정보 조회 실패:", err);
+      return res.status(500).send("사용자 정보 조회 실패");
     }
 
-    console.log("✅ DB 저장 성공:", result);
-    res.status(200).send("오디오 재생 로그가 저장되었습니다.");
+    const userName = userResult[0].name;
+
+    // 기존 데이터 확인
+    const checkQuery = `
+      SELECT user_id, Playtime FROM audio_logs WHERE user_id = ? AND audio_file = ?
+    `;
+    
+    db.query(checkQuery, [userId, audioFile], (err, results) => {
+      if (err) {
+        console.error("❌ DB 조회 오류:", err);
+        return res.status(500).send("오디오 로그 조회 실패");
+      }
+
+      if (results.length > 0) {
+        // 기존 Playtime 값과 합산
+        const newPlaytime = results[0].Playtime + Playtime;
+
+        const updateQuery = `
+          UPDATE audio_logs SET Playtime = ?, played_at = NOW() WHERE user_id = ? AND audio_file = ?
+        `;
+
+        db.query(updateQuery, [newPlaytime, userId, audioFile], (err, result) => {
+          if (err) {
+            console.error("❌ DB 업데이트 오류:", err);
+            return res.status(500).send("오디오 로그 업데이트 실패");
+          }
+          console.log("✅ 기존 로그 업데이트 완료:", result);
+          res.status(200).send("오디오 재생 로그가 업데이트되었습니다.");
+        });
+      } else {
+        // 새로운 데이터 삽입
+        const insertQuery = `
+          INSERT INTO audio_logs (user_id, user_name, audio_file, Playtime)
+          VALUES (?, ?, ?, ?)
+        `;
+
+        db.query(insertQuery, [userId, userName, audioFile, Playtime], (err, result) => {
+          if (err) {
+            console.error("❌ DB 삽입 오류:", err);
+            return res.status(500).send("오디오 로그 저장 실패");
+          }
+          console.log("✅ 새로운 로그 저장 완료:", result);
+          res.status(200).send("오디오 재생 로그가 저장되었습니다.");
+        });
+      }
+    });
   });
 });
+
