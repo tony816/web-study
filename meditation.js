@@ -9,6 +9,8 @@ function toggleAudio(thumbnailElement) {
   }
 
   const playIcon = thumbnailElement.querySelector(".play-icon");
+  const progressBar = thumbnailElement.querySelector(".progress-bar");
+  const timeDisplay = thumbnailElement.querySelector(".time-display");
 
   // 기존 오디오 중지
   if (currentAudio && currentAudio !== thumbnailElement.audio) {
@@ -24,14 +26,27 @@ function toggleAudio(thumbnailElement) {
   if (!thumbnailElement.audio) {
     thumbnailElement.audio = new Audio(audioFile);
 
+    thumbnailElement.audio.addEventListener("timeupdate", () => {
+      const progressPercent =
+        (thumbnailElement.audio.currentTime / thumbnailElement.audio.duration) *
+        100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      const currentTime = formatTime(thumbnailElement.audio.currentTime);
+      const totalTime = formatTime(thumbnailElement.audio.duration);
+      timeDisplay.textContent = `${currentTime} / ${totalTime}`;
+    });
+
     thumbnailElement.audio.addEventListener("ended", () => {
       console.log("📌 오디오 재생 완료. 서버에 로그 저장 요청.");
 
-      const playtimeValue = Math.floor(thumbnailElement.audio.duration); // ✅ duration을 올바르게 가져오기
+      const playtimeValue = Math.floor(thumbnailElement.audio.duration);
       saveAudioLog(audioFile, playtimeValue);
 
       playIcon.classList.remove("pause");
       playIcon.classList.add("play");
+      progressBar.style.width = "0%";
+      timeDisplay.textContent = "0:00 / 0:00";
       currentAudio = null;
       currentThumbnail = null;
     });
@@ -52,6 +67,15 @@ function toggleAudio(thumbnailElement) {
     currentThumbnail = null;
     console.log("📌 오디오 재생 중지:", audioFile);
   }
+}
+
+function formatTime(time) {
+  if (isNaN(time)) return "0:00";
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${minutes}:${seconds}`;
 }
 
 // JWT를 디코딩하는 함수 추가
