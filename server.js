@@ -393,7 +393,7 @@ app.post("/audio-played", (req, res) => {
 
         db.query(
           updateQuery,
-          [newPlayCount, , newPoint, userId, audioFile],
+          [newPlayCount, newPoint, userId, audioFile],
           (err, result) => {
             if (err) {
               console.error("❌ DB 업데이트 오류:", err);
