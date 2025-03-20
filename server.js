@@ -351,7 +351,6 @@ app.get("/users", (req, res) => {
 
 //이하는 로그인한 유저 관련 로직
 // 오디오 기록
-
 app.post("/audio-played", (req, res) => {
   console.log("📌 받은 요청 데이터:", req.body);
 
@@ -361,7 +360,7 @@ app.post("/audio-played", (req, res) => {
     return res.status(400).send("필수 데이터가 누락되었습니다.");
   }
 
-  // 사용자 이름 가져오기
+  // ✅ userName 가져오는 부분에 로그 추가
   const userQuery = `SELECT name FROM users WHERE id = ?`;
 
   db.query(userQuery, [userId], (err, userResult) => {
@@ -371,6 +370,12 @@ app.post("/audio-played", (req, res) => {
     }
 
     const userName = userResult[0].name;
+    console.log(
+      "📌 데이터베이스에서 가져온 userName:",
+      userName,
+      "| 타입:",
+      typeof userName
+    );
 
     // 기존 데이터 확인
     const checkQuery = `
@@ -379,16 +384,21 @@ app.post("/audio-played", (req, res) => {
 
     db.query(checkQuery, [userId, audioFile], (err, results) => {
       if (err) {
-        console.error("❌ DB 조회 오류:", err);
+        console.error("❌ audio_logs 조회 오류:", err);
         return res.status(500).send("오디오 로그 조회 실패");
       }
 
-      if (results.length > 0) {
-        const newPlayCount = results[0].play_count + 1;
-        const newPoint = newPlayCount * 10; // play_count * 10
+      let newPlayCount = 1;
+      let newPoint = 10; // 기본 10점
 
+      if (results.length > 0) {
+        newPlayCount = results[0].play_count + 1;
+        newPoint = newPlayCount * 10; // play_count * 10
+
+        // ✅ 기존 데이터가 있으면 UPDATE 실행
         const updateQuery = `
-          UPDATE audio_logs SET play_count = ?, point = ?, played_at = NOW() WHERE user_id = ? AND audio_file = ?
+          UPDATE audio_logs SET play_count = ?, point = ?, played_at = NOW() 
+          WHERE user_id = ? AND audio_file = ?
         `;
 
         db.query(
@@ -396,29 +406,97 @@ app.post("/audio-played", (req, res) => {
           [newPlayCount, newPoint, userId, audioFile],
           (err, result) => {
             if (err) {
-              console.error("❌ DB 업데이트 오류:", err);
+              console.error("❌ audio_logs UPDATE 오류:", err);
               return res.status(500).send("오디오 로그 업데이트 실패");
             }
-            console.log("✅ 기존 로그 업데이트 완료:", result);
-            res.status(200).send("오디오 재생 로그가 업데이트되었습니다.");
+            console.log("✅ audio_logs 업데이트 완료:", result);
+            updateTotalPoints(userId, userName, newPoint, res);
           }
         );
       } else {
-        // 새로운 데이터 삽입
+        // ✅ 기존 데이터가 없으면 INSERT 실행
         const insertQuery = `
           INSERT INTO audio_logs (user_id, user_name, audio_file, play_count, point)
-          VALUES (?, ?, ?, 1, 10)
+          VALUES (?, ?, ?, ?, ?)
         `;
 
-        db.query(insertQuery, [userId, userName, audioFile], (err, result) => {
-          if (err) {
-            console.error("❌ DB 삽입 오류:", err);
-            return res.status(500).send("오디오 로그 저장 실패");
+        db.query(
+          insertQuery,
+          [userId, userName, audioFile, newPlayCount, newPoint],
+          (err, result) => {
+            if (err) {
+              console.error("❌ audio_logs INSERT 오류:", err);
+              return res.status(500).send("오디오 로그 삽입 실패");
+            }
+            console.log("✅ audio_logs 새 데이터 삽입 완료:", result);
+            updateTotalPoints(userId, userName, newPoint, res); // 🔥 `userName` 추가
           }
-          console.log("✅ 새로운 로그 저장 완료:", result);
-          res.status(200).send("오디오 재생 횟수가 저장되었습니다.");
-        });
+        );
       }
     });
   });
 });
+
+function updateTotalPoints(userId, userName, newPoint, res) {
+  // ✅ userName 값 확인 (디버깅용)
+  console.log(
+    "📌 updateTotalPoints() 호출됨 → userId:",
+    userId,
+    "userName:",
+    userName,
+    "newPoint:",
+    newPoint
+  );
+
+  // ✅ userName이 숫자 또는 undefined이면 문자열로 변환
+  if (!userName || typeof userName !== "string") {
+    console.warn("⚠️ userName이 잘못된 값입니다. 기본값 'Unknown' 사용");
+    userName = String(userName) || "Unknown";
+  }
+
+  const checkTotalPointsQuery = `SELECT total_points FROM total_points WHERE user_id = ?`;
+
+  db.query(checkTotalPointsQuery, [userId], (err, results) => {
+    if (err) {
+      console.error("❌ total_points 조회 오류:", err);
+      return res.status(500).send("total_points 조회 실패");
+    }
+
+    if (results.length === 0) {
+      // `user_id`가 없으면 INSERT 실행
+      const insertTotalPointsQuery = `
+        INSERT INTO total_points (user_id, user_name, total_points) 
+        VALUES (?, ?, ?)
+      `;
+
+      db.query(
+        insertTotalPointsQuery,
+        [userId, userName, newPoint],
+        (err, result) => {
+          if (err) {
+            console.error("❌ total_points INSERT 오류:", err);
+            return res.status(500).send("total_points INSERT 실패");
+          }
+          console.log("✅ total_points 새로 추가 완료:", result);
+          res
+            .status(200)
+            .send("오디오 재생 데이터가 정상적으로 저장되었습니다.");
+        }
+      );
+    } else {
+      // `user_id`가 있으면 UPDATE 실행
+      const updateTotalPointsQuery = `
+        UPDATE total_points SET total_points = total_points + ? WHERE user_id = ?
+      `;
+
+      db.query(updateTotalPointsQuery, [newPoint, userId], (err, result) => {
+        if (err) {
+          console.error("❌ total_points UPDATE 오류:", err);
+          return res.status(500).send("total_points 업데이트 실패");
+        }
+        console.log("✅ total_points 업데이트 완료:", result);
+        res.status(200).send("오디오 재생 데이터가 정상적으로 저장되었습니다.");
+      });
+    }
+  });
+}
