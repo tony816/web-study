@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>포인트 테스트</title>
+  </head>
+  <body>
+    <h2>테스트: 포인트 → 등급</h2>
+    <label for="pointInput">포인트 입력:</label>
+    <input type="number" id="pointInput" placeholder="예: 4700" />
+    <button onclick="sendTest()">등급 확인</button>
+    <pre id="result"></pre>
+
+    <script>
+      function sendTest() {
+        const point = parseInt(document.getElementById("pointInput").value);
+        if (isNaN(point)) {
+          document.getElementById("result").textContent =
+            "숫자를 입력해주세요.";
+          return;
+        }
+
+        fetch("https://localhost:3001/api/debug/set-points", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: 1, point }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            document.getElementById(
+              "result"
+            ).textContent = `입력된 포인트: ${point}점\n등급: ${data.level}`;
+          })
+          .catch((err) => {
+            document.getElementById("result").textContent = "오류 발생: " + err;
+          });
+      }
+    </script>
+  </body>
+</html>

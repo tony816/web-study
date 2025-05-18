@@ -1,64 +1,116 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-        alert("로그인이 필요합니다.");
-        window.location.href = "login.html";
-        return;
-    }
+import { fetchWithToken } from "./utils.js";
 
-    try {
-        const response = await fetch("https://localhost:3001/dashboard", {
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
-        });
+async function loadTotalPoints() {
+  try {
+    const [pointsRes, logsRes] = await Promise.all([
+      fetchWithToken("https://localhost:3001/api/total-points"),
+      fetchWithToken("https://localhost:3001/api/audio-logs"),
+    ]);
 
-        if (!response.ok) {
-            throw new Error("인증 실패. 다시 로그인 해주세요.");
-        }
+    if (!pointsRes.ok || !logsRes.ok) throw new Error("데이터 조회 실패");
 
-        const data = await response.json();
-        // 대시보드 데이터를 화면에 표시
-        document.getElementById("user-info").innerText = JSON.stringify(data.user, null, 2);
-    } catch (error) {
-        console.error("대시보드 데이터 로드 실패:", error.message);
-        localStorage.removeItem("authToken");
-        alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
-        window.location.href = "login.html";
-    }
+    const pointsData = await pointsRes.json();
+    const logsData = await logsRes.json();
 
+    const level = logsData.length > 0 ? logsData[0].level ?? "N/A" : "N/A";
 
-    const userId = parseJwt(token).userId;
-
-    // 서버에 사용자 로그 요청
-    fetch(`http://localhost:3001/user-audio-logs/${userId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("로그 데이터를 불러오는 데 실패했습니다.");
-            }
-            return response.json();
-        })
-        .then(logs => {
-            const logsList = document.getElementById("audio-logs-list");
-            logs.forEach(log => {
-                const listItem = document.createElement("li");
-                listItem.textContent = `${log.audio_file} - ${log.duration}초 재생 - ${new Date(log.played_at).toLocaleString()}`;
-                logsList.appendChild(listItem);
-            });
-        })
-        .catch(err => console.error("에러:", err));
-
-});
-
-// parseJwt 함수는 JWT에서 userId를 추출
-function parseJwt(token) {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-        atob(base64)
-            .split("")
-            .map(c => `%${c.charCodeAt(0).toString(16).padStart(2, "0")}`)
-            .join("")
-    );
-    return JSON.parse(jsonPayload);
+    const container = document.getElementById("totalPointsContainer");
+    container.innerHTML = `
+      <table class="table table-bordered w-auto">
+        <thead>
+          <tr>
+            <th>레벨</th>
+            <th>총 포인트</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${level}</td>
+            <td>${pointsData.totalPoints ?? 0}점</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+  } catch (err) {
+    console.error("총 포인트 또는 레벨 불러오기 실패:", err);
+  }
 }
+
+async function loadAudioLogs() {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    document.querySelector("main").innerHTML = "<p>로그인이 필요합니다.</p>";
+    return;
+  }
+
+  try {
+    const response = await fetchWithToken(
+      "https://localhost:3001/api/audio-logs",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) throw new Error("데이터 로드 실패");
+
+    const logs = await response.json();
+    renderLogs(logs);
+  } catch (error) {
+    document.querySelector(
+      "main"
+    ).innerHTML = `<p>오류 발생: ${error.message}</p>`;
+  }
+}
+
+function renderLogs(logs) {
+  if (!Array.isArray(logs) || logs.length === 0) {
+    document.querySelector("main").innerHTML = "<p>재생 기록이 없습니다.</p>";
+    return;
+  }
+
+  const main = document.querySelector("main");
+
+  // 상단 제목 + 총 포인트 div 삽입
+  main.innerHTML = `
+    <h1 class='mb-4'>활동 기록</h1>
+    <div id="totalPointsContainer" class="mb-4"></div>
+  `;
+
+  loadTotalPoints();
+
+  // 로그 테이블 생성
+  const table = document.createElement("table");
+  table.className = "table custom-clean";
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>음원</th>
+        <th>재생횟수</th>
+        <th>포인트</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${logs
+        .map(
+          (log) => `
+        <tr>
+          <td>${log.title ?? "제목 없음"}</td>
+          <td>${log.play_count}</td>
+          <td>${log.point}</td>
+        </tr>
+      `
+        )
+        .join("")}
+    </tbody>
+  `;
+
+  // 테이블 삽입
+  main.appendChild(table);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadAudioLogs();
+});

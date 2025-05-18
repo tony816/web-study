@@ -39,7 +39,8 @@ function toggleAudio(thumbnailElement) {
 
     thumbnailElement.audio.addEventListener("ended", () => {
       console.log("📌 오디오 재생 완료. 서버에 카운팅 요청.");
-      saveAudioLog(audioFile);
+      const title = thumbnailElement.getAttribute("data-title") || "제목 없음";
+      saveAudioLog(audioFile, title);
 
       playIcon.classList.remove("pause");
       playIcon.classList.add("play");
@@ -97,8 +98,7 @@ function parseJwt(token) {
 }
 
 //서버 전송
-
-function saveAudioLog(audioFile) {
+function saveAudioLog(audioFile, title) {
   console.log("📌 `saveAudioLog()` 실행됨");
 
   const token = localStorage.getItem("authToken");
@@ -115,7 +115,7 @@ function saveAudioLog(audioFile) {
 
   const userId = decodedToken.userId;
 
-  console.log("📌 서버로 전송할 데이터:", { userId, audioFile });
+  console.log("📌 서버로 전송할 데이터:", { userId, audioFile, title });
 
   fetch("https://localhost:3001/audio-played", {
     method: "POST",
@@ -125,6 +125,7 @@ function saveAudioLog(audioFile) {
     body: JSON.stringify({
       userId,
       audioFile,
+      title,
     }),
   })
     .then((response) => {

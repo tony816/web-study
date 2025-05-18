@@ -1,333 +1,427 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
 
 /* 기본 스타일 */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
-
 
 /* 헤더 스타일 */
 header {
-    padding: 0 20px;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    box-sizing: border-box;
-    height: 80px;             /* 높이를 80px로 설정 */
-    display: flex;
-    align-items: center;      /* 세로 중앙 정렬 */
-    justify-content: space-between;
-    background-color: white;
-    border-bottom: 1px solid #ECE7E7F8;
-    
+  padding: 0 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
+  height: 80px; /* 높이를 80px로 설정 */
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between;
+  background-color: white;
+  border-bottom: 1px solid #ece7e7f8;
 }
 
 /* 로고 이미지 스타일 */
 .logo {
-    height: 50px; /* 로고 이미지 높이 */
-    margin-left: 30px;
+  height: 50px; /* 로고 이미지 높이 */
+  margin-left: 30px;
 }
 
 /* nav 스타일: 링크들을 수평 정렬 */
 nav {
-    display: flex;
-    align-items: center;  /* nav 텍스트 수직 중앙 정렬 */
-    margin-right: 20px;   /* 버튼과의 간격 */
+  display: flex;
+  align-items: center; /* nav 텍스트 수직 중앙 정렬 */
+  margin-right: 20px; /* 버튼과의 간격 */
 }
 
 nav a {
-    text-decoration: none;
-    color: black;
-    margin: 0 20px;       /* 링크 사이 간격 */
-    font-size: 1.25em;    /* 헤더 버튼보다 살짝 작은 크기 */
-    position: relative; 
+  text-decoration: none;
+  color: black;
+  margin: 0 20px; /* 링크 사이 간격 */
+  font-size: 1.25em; /* 헤더 버튼보다 살짝 작은 크기 */
+  position: relative;
 }
 
 /* nav 링크들 사이에 하나의 경계선 추가 */
 nav a:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    right: -20px;         /* 링크 오른쪽에 경계선 */
-    top: 50%;             /* 중앙 정렬 */
-    transform: translateY(-50%);  /* 수직 중앙 정렬 */
-    height: 60%;          /* 경계선 높이 설정 (텍스트 중심에 위치) */
-    width: 1px;
-    background-color: black;  /* 경계선 색상 */
-    
+  content: "";
+  position: absolute;
+  right: -20px; /* 링크 오른쪽에 경계선 */
+  top: 50%; /* 중앙 정렬 */
+  transform: translateY(-50%); /* 수직 중앙 정렬 */
+  height: 60%; /* 경계선 높이 설정 (텍스트 중심에 위치) */
+  width: 1px;
+  background-color: black; /* 경계선 색상 */
 }
 
+/* CSS 기반 원형 아이콘 버튼 */
+
+.profile-icon-button {
+  margin-right: -20px; /* ← 여기에 숫자만 조정해서 거리 조절 */
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon-css {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ffffff; /* 배경색 */
+  border: 1px solid black;
+  position: relative;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.profile-icon-css::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background-color: black;
+  border-radius: 50%;
+}
+
+.profile-icon-css::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 12px;
+  background-color: black;
+  border-radius: 6px / 4px;
+}
+
+.profile-icon-css:hover {
+  transform: scale(1.1);
+  background-color: #ffffff;
+}
 
 /* 로그인 버튼 스타일 */
 .auth-buttons {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .auth-buttons a {
-    text-decoration: none;
-    margin-left: 10px;
-    padding: 10px 20px;
-    font-size: 1em;
-    font-weight: bold;
-    border-radius: 50px;
-    transition: background-color 0.1s ease, transform 0.1s ease;
+  text-decoration: none;
+  margin-left: 10px;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 50px;
+  transition: background-color 0.1s ease, transform 0.1s ease;
 }
 
 /* 로그인 버튼 스타일 */
 .btn-login {
-    background-color: white;
-    color: black;
-    border: 1px solid black;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
 }
 
 .btn-login:hover {
-    background-color: #f0f0f0;
-    transform: scale(1.05);
+  background-color: #f0f0f0;
+  transform: scale(1.05);
 }
-
 
 .auth-buttons {
-    display: none; /* 초기 상태에서 숨김 */
+  display: none; /* 초기 상태에서 숨김 */
 }
 .auth-buttons.visible {
-    display: flex; /* 스크립트가 로드된 후 표시 */
-}
-
-
-.logout-button {
-    display: flex;
-    align-items: center;
+  display: flex; /* 스크립트가 로드된 후 표시 */
 }
 
 .logout-button {
-    text-decoration: none;
-    margin-left: 10px;
-    padding: 10px 20px;
-    font-size: 1em;
-    font-weight: bold;
-    border-radius: 50px;
-    transition: background-color 0.1s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
 }
 
-.logout-button{
-    background-color: #A3DC8B;
-    color: black;
-    border: 1px solid black;
+.logout-button {
+  text-decoration: none;
+  margin-left: 10px;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 50px;
+  transition: background-color 0.1s ease, transform 0.1s ease;
+}
+
+.logout-button {
+  background-color: #a3dc8b;
+  color: black;
+  border: 1px solid black;
 }
 
 .logout-button:hover {
-    background-color: #8cc679; /* 호버 효과 */
-    color: white;
-    transform: scale(1.05);
+  background-color: #8cc679; /* 호버 효과 */
+  color: white;
+  transform: scale(1.05);
 }
 
 /* 헤더와 결제 카드의 btn-primary 스타일을 동일하게 설정 */
-.btn-primary {  
-    background-color: #A3DC8B;  /* 배경색 */
-    border: 1px solid black;    /* 검정 테두리 */
-    color: black;               /* 텍스트 색상 */
-    border-radius: 50px;        /* 둥근 모서리 */
-    padding: 10px 20px;         /* 패딩: 버튼 크기 통일 */
-    font-size: 1.2em;           /* 폰트 크기 */
-    font-weight: bold;          /* 텍스트 굵기 */
-    transition: background-color 0.3s ease; /* 호버 효과 */
-    display: inline-block;
-    margin-top: -2px;           /* 버튼을 살짝 위로 이동하여 수평 정렬 */
+.btn-primary {
+  background-color: #a3dc8b; /* 배경색 */
+  border: 1px solid black; /* 검정 테두리 */
+  color: black; /* 텍스트 색상 */
+  border-radius: 50px; /* 둥근 모서리 */
+  padding: 10px 20px; /* 패딩: 버튼 크기 통일 */
+  font-size: 1.2em; /* 폰트 크기 */
+  font-weight: bold; /* 텍스트 굵기 */
+  transition: background-color 0.3s ease; /* 호버 효과 */
+  display: inline-block;
+  margin-top: -2px; /* 버튼을 살짝 위로 이동하여 수평 정렬 */
 }
 
 /* 헤더의 btn-primary에만 오른쪽 마진 추가 */
 header .btn-primary {
-    margin-right: 30px;         /* 웹페이지 오른쪽에서 더 이격 */
+  margin-right: 30px; /* 웹페이지 오른쪽에서 더 이격 */
 }
 
 /* 호버 시 버튼 색상 변경 */
 .btn-primary:hover {
-    background-color: #8cc679;  /* 호버 시 어두운 녹색 */
+  background-color: #8cc679; /* 호버 시 어두운 녹색 */
 }
 
 /* 헤더 우측을 감싸는 wrapper */
 .header-right {
-    display: flex;        /* nav와 버튼을 수평 정렬 */
-    align-items: center;  /* 세로 중앙 정렬 */
+  display: flex; /* nav와 버튼을 수평 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
 }
 
 /* 메인 콘텐츠 스타일 */
 main,
 main.cs-container,
-main.content-section{
-    padding: 20px;
-    margin-top: 100px; /* 헤더의 높이만큼 여백 추가 */
-    margin-bottom: 100px; /* 푸터와 간격을 두기 위한 마진 추가 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+main.content-section {
+  padding: 20px;
+  margin-top: 100px; /* 헤더의 높이만큼 여백 추가 */
+  margin-bottom: 100px; /* 푸터와 간격을 두기 위한 마진 추가 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* 이미지 스타일 (det1, det2, det3 ...) */
 [class^="det"] {
-    width: 860px;         /* 이미지 너비 설정 */
-    max-width: 100%;      /* 화면보다 커지지 않도록 */
-    height: auto;         /* 비율을 유지하며 높이 자동 조절 */
-    margin-top: 20px;     /* 상단 여백 추가 */
+  width: 860px; /* 이미지 너비 설정 */
+  max-width: 100%; /* 화면보다 커지지 않도록 */
+  height: auto; /* 비율을 유지하며 높이 자동 조절 */
+  margin-top: 20px; /* 상단 여백 추가 */
 }
 
 /* 결제 카드 스타일 */
 .card {
-    width: 860px;            /* det 이미지와 동일한 너비 */
-    max-width: 100%;         /* 화면보다 커지지 않도록 */
-    box-sizing: border-box;   /* 테두리 포함한 너비 계산 */
-    margin-bottom: 300px;
+  width: 860px; /* det 이미지와 동일한 너비 */
+  max-width: 100%; /* 화면보다 커지지 않도록 */
+  box-sizing: border-box; /* 테두리 포함한 너비 계산 */
+  margin-bottom: 300px;
 }
 
 .card-header {
-    background-color: #f0f0f0;
-    font-weight: bold;       /* card-header에 굵은 글씨 */
-    font-size: 3em;          /* 글씨 크기 */
+  background-color: #f0f0f0;
+  font-weight: bold; /* card-header에 굵은 글씨 */
+  font-size: 3em; /* 글씨 크기 */
 }
 
 .card-title {
-    font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 .card-body {
-    line-height: 1.6;        /* 줄 간격 */
-    padding: 20px;           /* 카드 본문의 패딩 */
+  line-height: 1.6; /* 줄 간격 */
+  padding: 20px; /* 카드 본문의 패딩 */
 }
 
 .card-text {
-    margin-bottom: 60px;     /* 본래의 간격을 유지하기 위한 마진 */
+  margin-bottom: 60px; /* 본래의 간격을 유지하기 위한 마진 */
 }
 
 .price {
-    font-size: 3.5em;        /* 가격 텍스트 크기 */
-    margin-top: 50px;
+  font-size: 3.5em; /* 가격 텍스트 크기 */
+  margin-top: 50px;
 }
 
 .small-text {
-    font-size: 0.4em;        /* 작은 텍스트 크기 */
-    vertical-align: middle;  /* 수직 정렬 */
+  font-size: 0.4em; /* 작은 텍스트 크기 */
+  vertical-align: middle; /* 수직 정렬 */
 }
-
 
 /* 이미지 및 버튼 스타일 */
 .cs-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    height: 80vh; /* 화면의 대부분을 차지하도록 */
-    position: relative;
-    z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 80vh; /* 화면의 대부분을 차지하도록 */
+  position: relative;
+  z-index: 500;
 }
 
 .cs-image {
-    width: 300px; /* 이미지 기본 크기 */
-    max-width: 100%; /* 화면보다 커지지 않도록 */
-    height: auto; /* 비율 유지 */
-    margin-bottom: 20px;
+  width: 300px; /* 이미지 기본 크기 */
+  max-width: 100%; /* 화면보다 커지지 않도록 */
+  height: auto; /* 비율 유지 */
+  margin-bottom: 20px;
 }
 
 .cs-button {
-    background-color: #A3DC8B; /* 버튼 색상 */
-    color: black;
-    padding: 10px 20px;
-    margin-top: 10px;
-    border: 1px solid black;
-    border-radius: 50px;
-    font-size: 1.2em;
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    position: relative;
-    z-index: 501;
+  background-color: #a3dc8b; /* 버튼 색상 */
+  color: black;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border: 1px solid black;
+  border-radius: 50px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  position: relative;
+  z-index: 501;
 }
 
 .cs-button:hover {
-    background-color: #8cc679; /* 호버 효과 */
-    transform: scale(1.05); /* 약간 확대 */
+  background-color: #8cc679; /* 호버 효과 */
+  transform: scale(1.05); /* 약간 확대 */
 }
-
-
-
 
 /* 푸터 스타일 */
 footer {
-    background-color: #f0f0f0;
-    padding: 20px;
-    color: #666;
-    font-size: 0.9em;
-    width: 100%;
+  background-color: #f0f0f0;
+  padding: 20px;
+  color: #666;
+  font-size: 0.9em;
+  width: 100%;
 }
 
 .footer-content {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px; /* 콘텐츠 사이에 여유 공간 */
-    text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* 콘텐츠 사이에 여유 공간 */
+  text-align: left;
 }
 
 /* 각 span 요소에 구분선 추가 */
 .footer-content span {
-    display: flex;
-    align-items: center;  /* 콘텐츠 수직 중앙 정렬 */
-    padding-right: 10px;
-    margin-right: 10px;
-    position: relative;
+  display: flex;
+  align-items: center; /* 콘텐츠 수직 중앙 정렬 */
+  padding-right: 10px;
+  margin-right: 10px;
+  position: relative;
 }
 
 /* 구분선을 콘텐츠 사이의 중앙에 배치 */
 .footer-content span:not(:last-child)::after {
-    content: "";
-    position: absolute;
-    right: -7px;           /* 콘텐츠 사이 공간의 중앙에 맞추기 위해 -7px */
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    height: 13px;
-    background-color: #ccc;
-    transform: translateY(4px);
+  content: "";
+  position: absolute;
+  right: -7px; /* 콘텐츠 사이 공간의 중앙에 맞추기 위해 -7px */
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  height: 13px;
+  background-color: #ccc;
+  transform: translateY(4px);
 }
 
 /* 사업자등록번호와 통신판매업신고 사이 구분선 제거 */
 .footer-content span:nth-child(3)::after {
-    display: none;
+  display: none;
 }
 
 /* 줄바꿈 처리 */
 .line-break {
-    flex-basis: 100%;  /* 줄바꿈 */
-    margin-top: -400px;
-    margin-bottom: -400px;
+  flex-basis: 100%; /* 줄바꿈 */
+  margin-top: -400px;
+  margin-bottom: -400px;
 }
-
 
 /* 마지막 항목 구분선 제거 */
 .footer-content span:last-child {
-    border-right: none;
+  border-right: none;
 }
 
-
 footer a {
-    color: inherit;       /* 링크 색상 상속 */
-    text-decoration: none; /* 밑줄 제거 */
+  color: inherit; /* 링크 색상 상속 */
+  text-decoration: none; /* 밑줄 제거 */
 }
 
 footer a:hover {
-    text-decoration: none; /* 호버 시에도 밑줄 없음 */
+  text-decoration: none; /* 호버 시에도 밑줄 없음 */
 }
 
+/* 총 포인트 테이블 */
+#totalPointsContainer {
+  display: flex;
+  justify-content: center; /* 가운데 정렬 */
+  margin-bottom: 2rem;
+}
 
+#totalPointsContainer table {
+  width: 70% !important;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  background-color: #fefefe;
+  border: 2px solid #ccc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
+}
 
+#totalPointsContainer table thead th {
+  background-color: #c4e7b4;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
 
+#totalPointsContainer table tbody td {
+  background-color: #ffffff;
+}
 
+#totalPointsContainer th,
+#totalPointsContainer td {
+  padding: 1.2rem 1.5rem;
+  text-align: center;
+  white-space: nowrap; /* ✅ 줄바꿈 방지 */
+  word-break: keep-all; /* ✅ 단어 쪼개지 않음 */
+}
+
+/* 음원 재생 기록 테이블 */
+/* 전체 배경 흰색 유지 */
+.custom-clean {
+  width: 90%;
+  font-size: 0.95rem;
+  margin: 0 auto;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background-color: #ffffff;
+}
+
+/* 제목줄만 회색 */
+.custom-clean thead th {
+  background-color: #f0f0f0;
+  text-align: center;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+/* 본문 흰색 유지 */
+.custom-clean tbody tr {
+  background-color: #ffffff;
+}
+
+.custom-clean td {
+  text-align: center;
+  padding: 0.65rem 1rem;
+  word-break: keep-all;
+}
