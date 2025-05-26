@@ -112,8 +112,10 @@
           </div>
 
           <div>
-            <button type="button" id="check-email" class="btn btn-secondary">중복 확인</button>
-        </div>
+            <button type="button" id="check-email" class="btn btn-secondary">
+              중복 확인
+            </button>
+          </div>
 
           <!-- 비밀번호 -->
           <div class="mb-3">
@@ -137,7 +139,9 @@
             </div>
             <!-- 비밀번호 힌트와 일치 여부 메시지 한 줄에 배치 -->
             <div class="d-flex">
-              <span class="password-hint">영문+숫자+특수문자(!,@,#,$,%,*,?,&,+)</span>
+              <span class="password-hint"
+                >영문+숫자+특수문자(!,@,#,$,%,*,?,&,+)</span
+              >
               <div id="password-message" style="color: red"></div>
             </div>
           </div>
@@ -205,19 +209,15 @@
       </div>
     </footer>
 
-    <script> fetch("header.html")
-      .then(response => response.text())
-      .then(data => {
+    <script>
+      fetch("header.html")
+        .then((response) => response.text())
+        .then((data) => {
           document.getElementById("header-placeholder").innerHTML = data;
           loadHeaderJS();
-      });
+        });
     </script>
     <script src="header.js" defer></script>
-    <script type="module">
-      import { submitForm } from "./backend.js";
-
-    </script>
-   <script type="module" src="frontend.js"></script>
-
+    <script type="module" src="js/formHandler.js"></script>
   </body>
 </html>
