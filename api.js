@@ -1,50 +1,65 @@
 // api.js
 
-const BASE_URL = "https://localhost:3001"; // 필요 시 공통 prefix 분리
+const BASE_URL = "http://localhost:3001"; // TODO: 배포 시 환경변수 처리 가능
+
+async function fetchJson(endpoint, options = {}) {
+  const res = await fetch(BASE_URL + endpoint, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    credentials: "include",
+  });
+
+  const isJson = res.headers.get("content-type")?.includes("application/json");
+  const data = isJson ? await res.json() : await res.text();
+
+  if (!res.ok) {
+    const message = isJson ? data.message || "서버 오류 발생" : data;
+    throw new Error(message);
+  }
+
+  return data;
+}
 
 export async function checkEmailAvailability(email) {
-  const res = await fetch(
-    `${BASE_URL}/check-email?email=${encodeURIComponent(email)}`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  if (!email || email.trim() === "") {
+    console.warn("checkEmailAvailability: 빈 이메일");
+    return false;
+  }
 
-  if (!res.ok) throw new Error("이메일 확인 실패");
-  const data = await res.json();
-  return data.available;
+  const result = await fetchJson("/check-email", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+
+  return result.available;
 }
 
 export async function checkUserDuplicate(name, phone) {
-  const res = await fetch(
-    `${BASE_URL}/check-user?name=${encodeURIComponent(
-      name
-    )}&phone=${encodeURIComponent(phone)}`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  if (!name || !phone) {
+    console.warn("checkUserDuplicate: 이름 또는 전화번호 누락");
+    return false;
+  }
 
-  if (!res.ok) throw new Error("사용자 확인 실패");
-  const data = await res.json();
-  return data.available;
+  const result = await fetchJson("/check-user", {
+    method: "POST",
+    body: JSON.stringify({ name, phone }),
+  });
+
+  return result.duplicate;
 }
 
 export async function submitRegistration(formData) {
-  const res = await fetch(`${BASE_URL}/register`, {
+  if (!formData || typeof formData !== "object") {
+    throw new Error("유효하지 않은 등록 데이터입니다.");
+  }
+
+  const result = await fetchJson("/register", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include", // 쿠키 포함
     body: JSON.stringify(formData),
   });
 
-  if (!res.ok) {
-    const error = await res.text();
-    throw new Error(error);
-  }
-
-  const data = await res.json();
-  return data;
+  return result;
 }

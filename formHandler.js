@@ -12,146 +12,156 @@ import {
   submitRegistration,
 } from "./api.js";
 
-window.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector("form");
-  const checkEmailBtn = document.getElementById("check-email");
-  const passwordInput = document.getElementById("password");
-  const confirmPasswordInput = document.getElementById("confirm-password");
-  const phoneInput = document.getElementById("phone");
-
-  // 날짜 선택 초기화
+export function initializeForm() {
   populateDateSelectors();
+  setupPasswordValidation();
+  setupPhoneAutoHyphen();
+  setupEmailDomainSync();
+  setupEmailDuplicationCheck();
+  setupUserDuplicationCheck();
+  setupFormSubmission();
+  setupCheckEmailButton();
+}
 
-  // 비밀번호 실시간 검증
-  passwordInput.addEventListener("input", () => {
-    validatePasswordMatch(passwordInput.value, confirmPasswordInput.value);
-  });
-  confirmPasswordInput.addEventListener("input", () => {
-    validatePasswordMatch(passwordInput.value, confirmPasswordInput.value);
-  });
-
-  // 휴대폰 하이픈 자동 입력
-  phoneInput.addEventListener("input", () => {
-    let phone = phoneInput.value.replace(/\D/g, "");
-    if (phone.length > 3 && phone.length <= 7) {
-      phone = phone.replace(/(\d{3})(\d+)/, "$1-$2");
-    } else if (phone.length > 7) {
-      phone = phone.replace(/(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
-    }
-    phoneInput.value = phone;
-  });
-
-  // 이메일 중복 확인 버튼
-  checkEmailBtn.addEventListener("click", async () => {
-    const emailId = document.getElementById("email").value.trim();
-    const emailProvider = document.getElementById("email-provider").value;
-    const email = `${emailId}@${emailProvider}`;
-
-    try {
-      const available = await checkEmailAvailability(email);
-      alert(
-        available ? "사용 가능한 이메일입니다." : "이미 등록된 이메일입니다."
-      );
-    } catch (err) {
-      console.error(err);
-      alert("이메일 중복 확인 중 오류가 발생했습니다.");
-    }
-  });
-
-  // 가입 폼 제출
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const password = passwordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-
-    // 기본 필드 확인
-    const fieldsValid = validateFormFields();
-    const genderValid = validateRadioGroup("gender");
-    const subValid = validateRadioGroup("subscription");
-    const passwordsMatch = validatePasswordMatch(password, confirmPassword);
-
-    if (!fieldsValid || !genderValid || !subValid || !passwordsMatch) {
-      alert("필드를 확인해 주세요.");
-      return;
-    }
-
-    const name = document.getElementById("name").value.trim();
-    const phone = phoneInput.value.trim();
-
-    // 사용자 중복 확인
-    try {
-      const userAvailable = await checkUserDuplicate(name, phone);
-      if (!userAvailable) {
-        alert("이미 가입된 사용자입니다.");
-        return;
-      }
-    } catch (err) {
-      alert("사용자 중복 확인 중 오류 발생");
-      return;
-    }
-
-    // 서버 전송 데이터 구성
-    const email = `${document.getElementById("email").value}@${
-      document.getElementById("email-provider").value
-    }`;
-    const birthdate = `${document.getElementById("year").value}-${String(
-      document.getElementById("month").value
-    ).padStart(2, "0")}-${String(document.getElementById("day").value).padStart(
-      2,
-      "0"
-    )}`;
-
-    const formData = {
-      name,
-      gender: document.querySelector('input[name="gender"]:checked').value,
-      birthdate,
-      email,
-      password,
-      phone,
-      subscription_period: document.querySelector(
-        'input[name="subscription"]:checked'
-      ).value,
-    };
-
-    // 서버 요청
-    try {
-      const response = await submitRegistration(formData);
-      if (response.success) {
-        alert("가입이 완료되었습니다.");
-        form.reset();
-      } else {
-        alert(response.message || "가입 실패");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("가입 요청 중 오류가 발생했습니다.");
-    }
-  });
-});
-
-// 날짜 셀렉터 자동 생성
 function populateDateSelectors() {
   const yearSelect = document.getElementById("year");
   const monthSelect = document.getElementById("month");
   const daySelect = document.getElementById("day");
 
-  for (let y = 2023; y >= 1900; y--) {
-    const opt = document.createElement("option");
-    opt.value = y;
-    opt.text = `${y}년`;
-    yearSelect.appendChild(opt);
+  for (let y = 1940; y <= 2025; y++) {
+    yearSelect.appendChild(new Option(y, y));
   }
   for (let m = 1; m <= 12; m++) {
-    const opt = document.createElement("option");
-    opt.value = m;
-    opt.text = `${m}월`;
-    monthSelect.appendChild(opt);
+    monthSelect.appendChild(new Option(m, m));
   }
   for (let d = 1; d <= 31; d++) {
-    const opt = document.createElement("option");
-    opt.value = d;
-    opt.text = `${d}일`;
-    daySelect.appendChild(opt);
+    daySelect.appendChild(new Option(d, d));
   }
+}
+
+function setupPasswordValidation() {
+  const password = document.getElementById("password");
+  const confirmPassword = document.getElementById("confirm-password");
+  const message = document.getElementById("password-match-message");
+
+  function handleInput() {
+    const result = validatePasswordMatch(password.value, confirmPassword.value);
+    message.textContent = result.message;
+    message.style.color = result.valid ? "green" : "red";
+  }
+
+  password.addEventListener("input", handleInput);
+  confirmPassword.addEventListener("input", handleInput);
+}
+
+function setupPhoneAutoHyphen() {
+  const phone = document.getElementById("phone");
+  phone.addEventListener("input", function () {
+    let val = this.value.replace(/\D/g, "");
+    if (val.length > 3 && val.length <= 7)
+      val = val.replace(/(\d{3})(\d+)/, "$1-$2");
+    else if (val.length > 7)
+      val = val.replace(/(\d{3})(\d{4})(\d+)/, "$1-$2-$3");
+    this.value = val;
+  });
+}
+
+function setupEmailDomainSync() {
+  const emailId = document.getElementById("email-id");
+  const provider = document.getElementById("email-provider");
+  const email = document.getElementById("email");
+
+  function updateEmail() {
+    email.value = `${emailId.value}@${provider.value}`;
+  }
+
+  emailId.addEventListener("input", updateEmail);
+  provider.addEventListener("change", updateEmail);
+}
+
+function setupEmailDuplicationCheck() {
+  const emailField = document.getElementById("email");
+  emailField.addEventListener("blur", async () => {
+    const email = emailField.value;
+    if (!email) return;
+    const available = await checkEmailAvailability(email);
+    if (!available) {
+      alert("이미 사용 중인 이메일입니다.");
+    }
+  });
+}
+
+function setupCheckEmailButton() {
+  const button = document.getElementById("check-email");
+  const email = document.getElementById("email");
+
+  if (!button || !email) return;
+
+  button.addEventListener("click", async () => {
+    const isAvailable = await checkEmailAvailability(email.value);
+    alert(isAvailable ? "사용 가능한 이메일입니다." : "이미 사용 중인 이메일입니다.");
+  });
+}
+
+function setupUserDuplicationCheck() {
+  const name = document.getElementById("name");
+  const phone = document.getElementById("phone");
+
+  async function checkDuplicate() {
+    if (!name.value || !phone.value) return;
+    const isDuplicate = await checkUserDuplicate(name.value, phone.value);
+    if (isDuplicate) {
+      alert("이미 지원한 기록이 있습니다.");
+    }
+  }
+
+  name.addEventListener("blur", checkDuplicate);
+  phone.addEventListener("blur", checkDuplicate);
+}
+
+function setupFormSubmission() {
+  const form = document.getElementById("application-form");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const validation = validateFormFields(formData);
+
+    if (!validation.success) {
+      alert(validation.message);
+      highlightInvalidFields(validation.invalidFields);
+      return;
+    }
+
+    const jsonData = Object.fromEntries(formData.entries());
+    jsonData.birthdate = `${formData.get("year")}-${formData.get("month")}-${formData.get("day")}`;
+    jsonData.gender = formData.get("gender");
+    jsonData.subscription = formData.get("subscription");
+
+    try {
+      const result = await submitRegistration(jsonData);
+      if (result.success) {
+        alert("지원이 완료되었습니다!");
+        form.reset();
+      } else {
+        alert("제출 실패: " + result.message);
+      }
+    } catch (err) {
+      alert("서버 오류: " + err.message);
+    }
+  });
+}
+
+function highlightInvalidFields(fields) {
+  fields.forEach((field) => {
+    const input = document.querySelector(`[name="${field}"]`);
+    if (input) input.classList.add("input-error");
+
+    if (field === "gender" || field === "subscription") {
+      document
+        .querySelectorAll(`input[name="${field}"]`)
+        .forEach((el) => el.classList.add("radio-error"));
+    }
+  });
 }

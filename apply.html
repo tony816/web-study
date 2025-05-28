@@ -218,6 +218,9 @@
         });
     </script>
     <script src="header.js" defer></script>
-    <script type="module" src="js/formHandler.js"></script>
+    <script type="module">
+  import { initializeForm } from "./formHandler.js";
+  initializeForm();
+</script>
   </body>
 </html>

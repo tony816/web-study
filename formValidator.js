@@ -1,20 +1,27 @@
 // formValidator.js
-export function validateFormFields() {
-  let isValid = true;
-  const requiredFields = document.querySelectorAll(
-    'input[type="text"], input[type="password"]'
-  );
 
-  requiredFields.forEach((field) => {
-    if (field.value.trim() === "") {
-      isValid = false;
-      field.style.border = "1px solid red";
-    } else {
-      field.style.border = "1px solid #ccc";
+export function validateFormFields(formData) {
+  const invalidFields = [];
+
+  // 필수 입력 필드 확인
+  ["name", "phone", "email", "password", "confirm-password"].forEach((field) => {
+    const value = formData.get(field);
+    if (!value || value.trim() === "") {
+      invalidFields.push(field);
     }
   });
 
-  return isValid;
+  // 라디오 그룹 검사
+  if (!formData.get("gender")) invalidFields.push("gender");
+  if (!formData.get("subscription")) invalidFields.push("subscription");
+
+  return {
+    success: invalidFields.length === 0,
+    invalidFields,
+    message: invalidFields.length
+      ? "필수 항목을 모두 입력해주세요."
+      : "유효성 검사를 통과했습니다.",
+  };
 }
 
 export function validateRadioGroup(name) {
@@ -22,22 +29,18 @@ export function validateRadioGroup(name) {
   const isChecked = Array.from(radios).some((r) => r.checked);
   if (!isChecked) {
     radios.forEach((r) => r.classList.add("radio-error"));
+  } else {
+    radios.forEach((r) => r.classList.remove("radio-error"));
   }
   return isChecked;
 }
 
 export function validatePasswordMatch(password, confirmPassword) {
-  const message = document.getElementById("password-message");
   if (password === "") {
-    message.textContent = "";
-    return false;
+    return { valid: false, message: "" };
   } else if (password === confirmPassword) {
-    message.textContent = "비밀번호가 일치합니다.";
-    message.style.color = "green";
-    return true;
+    return { valid: true, message: "비밀번호가 일치합니다." };
   } else {
-    message.textContent = "비밀번호가 일치하지 않습니다.";
-    message.style.color = "red";
-    return false;
+    return { valid: false, message: "비밀번호가 일치하지 않습니다." };
   }
 }

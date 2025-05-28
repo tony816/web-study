@@ -435,8 +435,10 @@ app.post("/audio-played", (req, res) => {
       db.query(pointQuery, [userId], (err, pointResult) => {
         if (err) return res.status(500).send("포인트 합산 실패");
 
-        const totalPoint = pointResult[0].total || 0;
-        const level = getLevelByPoint(totalPoint + newPoint); // 이번 점수 포함해서 등급 산정
+         const currentTotal = pointResult[0].total || 0;
+  const updatedTotal = results.length > 0 ? currentTotal - results[0].point + newPoint : currentTotal + newPoint;
+  const level = getLevelByPoint(updatedTotal);  // 수정된 부분
+
 
         if (results.length > 0) {
           const updateQuery = `
