@@ -79,10 +79,19 @@ main {
     margin-left: 5px;  /* 입력 필드와 약간의 간격 */
 }
 
-#password-message {
-    color: red;       /* 비밀번호 일치 여부에 따라 동적으로 변경됨 */
-    margin-left: 90px;
+.password-feedback-line {
+    display: flex;
+    justify-content: space-between; /* 힌트는 왼쪽, 메시지는 오른쪽으로 배치 */
+    width: 100%; /* 부모 너비를 초과하지 않도록 설정 */
 }
+
+#password-message {
+    color: red;
+    margin-left: 0; /* 기존의 큰 여백 제거 또는 최소화 */
+    /* text-align: right; */ /* 필요하다면 메시지 텍스트를 오른쪽 정렬 */
+    flex-shrink: 0; /* 메시지 내용이 길어져도 줄어들지 않도록 설정 (선택 사항) */
+}
+
 
 /* 구독 기간 간격 */
 .form-label {
